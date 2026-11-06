@@ -1,24 +1,7 @@
-import importlib
-import sys
-import types
+from server.api import solve_routes
 
 
-class _FakeRouter:
-    def post(self, *args, **kwargs):
-        return lambda func: func
-
-
-def _load_solve_routes(monkeypatch):
-    fake_fastapi = types.ModuleType("fastapi")
-    fake_fastapi.APIRouter = _FakeRouter
-    monkeypatch.setitem(sys.modules, "fastapi", fake_fastapi)
-    sys.modules.pop("server.api.solve_routes", None)
-
-    return importlib.import_module("server.api.solve_routes")
-
-
-def test_solve_result_builds_routing_context(monkeypatch):
-    solve_routes = _load_solve_routes(monkeypatch)
+def test_solve_result_builds_routing_context():
     env = {"targets": [{"id": "T1"}]}
     drone_configs = {"1": {"enabled": True}}
     matrix = {

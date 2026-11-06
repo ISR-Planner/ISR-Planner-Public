@@ -3,6 +3,7 @@
 import copy
 import sys
 from types import SimpleNamespace
+from typing import Any
 
 import pytest
 
@@ -13,7 +14,7 @@ from server.database import mission_retrieval as retrieval
 PRIVATE = "synthetic-private-diagnostic-marker"
 ERROR = f"SDK echoed credential and record at https://storage.invalid/{PRIVATE}"
 
-LEDGER_CASES = [
+LEDGER_CASES: list[tuple[str, tuple[Any, ...], dict[str, Any], Any]] = [
     ("create_agent_run", (), {}, None),
     ("update_agent_run", ("neutral",), {"total_points": 0}, False),
     ("get_agent_run", ("neutral",), {}, None),
@@ -33,7 +34,7 @@ LEDGER_CASES = [
     ("cache_sam_paths", ("neutral", "neutral", "neutral", {}), {}, None),
     ("get_cached_sam_paths", ("neutral", "neutral"), {}, None),
 ]
-MEMORY_CASES = [
+MEMORY_CASES: list[tuple[str, tuple[Any, ...], Any]] = [
     ("_load_memory_supabase", (), []),
     ("_add_memory_supabase", ("neutral content", "neutral"), None),
     ("_clear_memory_supabase", (), 0),
