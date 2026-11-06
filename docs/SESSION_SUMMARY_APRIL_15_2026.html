@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ISR Planner Development Session - April 15, 2026</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      line-height: 1.6;
+      color: #333;
+    }
+    h1 { color: #1e3a5f; border-bottom: 3px solid #1e3a5f; padding-bottom: 10px; }
+    h2 { color: #2563eb; margin-top: 40px; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; }
+    h3 { color: #1e40af; margin-top: 25px; }
+    h4 { color: #3b82f6; }
+    table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+    th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+    th { background-color: #f3f4f6; font-weight: 600; }
+    tr:nth-child(even) { background-color: #f9fafb; }
+    code { background-color: #f3f4f6; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; font-family: 'SF Mono', Monaco, monospace; }
+    pre { background-color: #1f2937; color: #f9fafb; padding: 15px; border-radius: 5px; overflow-x: auto; }
+    pre code { background: none; padding: 0; color: inherit; }
+    .metadata { background-color: #f0f9ff; padding: 15px; border-radius: 8px; margin-bottom: 30px; border-left: 4px solid #2563eb; }
+    .section { background-color: #fff; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .highlight { background-color: #fef3c7; padding: 2px 4px; }
+    .success { background-color: #d1fae5; padding: 2px 4px; }
+    .warning { background-color: #fee2e2; padding: 2px 4px; }
+    hr { border: none; border-top: 1px solid #e5e7eb; margin: 40px 0; }
+    ul, ol { margin: 10px 0 10px 20px; }
+    li { margin: 5px 0; }
+    .toc { background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    .toc ul { list-style: none; margin: 0; padding: 0; }
+    .toc li { margin: 8px 0; }
+    .toc a { color: #2563eb; text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+    .commit-box { background-color: #f0fdf4; border: 1px solid #86efac; padding: 15px; border-radius: 5px; margin: 15px 0; }
+    @media print {
+      body { margin: 20px; max-width: none; }
+      pre { white-space: pre-wrap; }
+      .section { box-shadow: none; border: 1px solid #e5e7eb; }
+    }
+  </style>
+</head>
+<body>
+  <h1>ISR Mission Planner - Development Session Summary</h1>
+
+  <div class="metadata">
+    <strong>Date:</strong> April 15, 2026<br>
+    <strong>Branch:</strong> release/v1.0-clean<br>
+    <strong>Commits:</strong> 264efc5, 975a089<br>
+    <strong>Developer:</strong> Kamal Ali + Claude Opus 4.5
+  </div>
+
+  <div class="toc">
+    <h3 style="margin-top:0">Table of Contents</h3>
+    <ul>
+      <li><a href="#overview">1. Session Overview</a></li>
+      <li><a href="#map-integration">2. Map Integration (Leaflet)</a></li>
+      <li><a href="#stats-fix">3. Animation Stats Fix</a></li>
+      <li><a href="#map-view-export">4. Map View Export/Import</a></li>
+      <li><a href="#grid-reference">5. Grid Distance & Drone Speed Reference</a></li>
+      <li><a href="#files-modified">6. Files Modified</a></li>
+      <li><a href="#commits">7. Commit Details</a></li>
+    </ul>
+  </div>
+
+  <hr>
+
+  <h2 id="overview">1. Session Overview</h2>
+  <div class="section">
+    <p>This session focused on two major enhancements to the ISR Mission Planner:</p>
+    <ol>
+      <li><strong>Map Integration</strong> - Added a Leaflet map underlay with Grid/Map toggle, allowing missions to be visualized on real geographic coordinates</li>
+      <li><strong>Stats Consistency Fix</strong> - Fixed a bug where animation stats showed different fuel values than solver stats</li>
+    </ol>
+    <p>Additionally, we documented the relationship between grid units and real-world distances for mission planning reference.</p>
+  </div>
+
+  <hr>
+
+  <h2 id="map-integration">2. Map Integration (Leaflet)</h2>
+  <div class="section">
+    <h3>What Was Added</h3>
+    <p>The ISR Planner now supports a real geographic map underlay using Leaflet.js, enabling missions to be planned on actual terrain.</p>
+
+    <h4>Features</h4>
+    <ul>
+      <li><strong>Grid/Map Toggle</strong> - Buttons in canvas header to switch between abstract grid view and map view</li>
+      <li><strong>Tile Layer Selection</strong> - Street map or Satellite imagery options</li>
+      <li><strong>Geographic Pinning</strong> - All elements (targets, airports, SAMs, trajectories) are pinned to lat/lng coordinates</li>
+      <li><strong>Pan Support</strong> - Drag to pan when not in edit mode</li>
+      <li><strong>Edit Mode</strong> - Canvas captures clicks for placing elements</li>
+      <li><strong>Coordinate Transformation</strong> - Seamless conversion between grid coordinates and geographic coordinates</li>
+    </ul>
+
+    <h4>Technical Implementation</h4>
+    <table>
+      <tr><th>Component</th><th>Description</th></tr>
+      <tr><td><code>w2c()</code></td><td>World-to-canvas conversion using Leaflet's <code>latLngToContainerPoint</code> in map mode</td></tr>
+      <tr><td><code>canvasToWorld()</code></td><td>Canvas-to-world conversion using Leaflet's <code>containerPointToLatLng</code> in map mode</td></tr>
+      <tr><td><code>gridToLatLng()</code></td><td>Converts grid coordinates (0-100) to lat/lng within configured bounds</td></tr>
+      <tr><td><code>latLngToGrid()</code></td><td>Converts lat/lng back to grid coordinates</td></tr>
+    </table>
+
+    <h4>Default Geographic Bounds</h4>
+    <p>The default map area is centered on San Francisco:</p>
+    <pre><code>{
+  south: 37.70,
+  north: 37.85,
+  west: -122.51,
+  east: -122.36
+}</code></pre>
+    <p>This 0.15° × 0.15° area maps to the 100 × 100 grid coordinate system.</p>
+
+    <div class="commit-box">
+      <strong>Commit:</strong> 264efc5<br>
+      <strong>Message:</strong> feat: Map integration — Leaflet underlay with Grid/Map toggle and pan
+    </div>
+  </div>
+
+  <hr>
+
+  <h2 id="stats-fix">3. Animation Stats Fix</h2>
+  <div class="section">
+    <h3>Problem Statement</h3>
+    <p>The mission stats panel showed different values after animation compared to after accepting a solve:</p>
+
+    <table>
+      <tr><th>Metric</th><th>After Solve</th><th>After Animate</th></tr>
+      <tr><td>D3 Fuel</td><td>207 / 250</td><td class="warning">283 / 250 (OVER!)</td></tr>
+      <tr><td>Total Fuel</td><td>1051 / 1215</td><td class="warning">1849 / 1215</td></tr>
+    </table>
+
+    <p>This caused confusion because D3 appeared within budget after solve but over budget after animation.</p>
+
+    <h3>Root Cause Analysis</h3>
+    <h4>Two Different Distance Calculations</h4>
+    <p>The application had two functions calculating stats:</p>
+
+    <ol>
+      <li><strong><code>updateStatsFromRoutes()</code></strong> - Used after accepting a solve
+        <ul>
+          <li>Uses <code>routeInfo.distance</code> (solver's computed value)</li>
+          <li>Includes SAM-aware shortest path distances + loiter fuel</li>
+        </ul>
+      </li>
+      <li><strong><code>updateStatsFromAnimation()</code></strong> - Used during/after animation
+        <ul>
+          <li>Was using <code>droneState.distanceTraveled</code> (trajectory-based)</li>
+          <li>Calculated by walking through all trajectory points</li>
+        </ul>
+      </li>
+    </ol>
+
+    <h4>Why They Differed</h4>
+    <pre><code>Solver Distance = Matrix-based shortest paths + loiter fuel
+Animation Distance = Sum of all trajectory segment lengths</code></pre>
+    <p>The trajectory includes many intermediate points for smooth SAM avoidance, making the animation distance artificially longer than the solver's actual fuel cost.</p>
+
+    <h3>Solution</h3>
+    <p>Modified <code>updateStatsFromAnimation()</code> to use <code>routeInfo.distance</code> (the solver's value) instead of <code>droneState.distanceTraveled</code>:</p>
+
+    <pre><code>// Before (incorrect)
+const distanceTraveled = droneState.distanceTraveled;
+setText(`stat-d${did}-fuel`, `${Math.round(distanceTraveled)} / ${Math.round(budget)}`);
+
+// After (correct)
+const routeDistanceForDisplay = Number(routeInfo.distance || 0);
+setText(`stat-d${did}-fuel`, `${Math.round(routeDistanceForDisplay)} / ${Math.round(budget)}`);</code></pre>
+
+    <h3>Result</h3>
+    <table>
+      <tr><th>Metric</th><th>After Solve</th><th>After Animate</th></tr>
+      <tr><td>D3 Fuel</td><td>207 / 250</td><td class="success">207 / 250 ✓</td></tr>
+      <tr><td>Total Fuel</td><td>1051 / 1215</td><td class="success">1051 / 1215 ✓</td></tr>
+    </table>
+
+    <div class="commit-box">
+      <strong>Commit:</strong> 975a089<br>
+      <strong>Message:</strong> fix: Animation stats now consistent with solver stats
+    </div>
+  </div>
+
+  <hr>
+
+  <h2 id="map-view-export">4. Map View Export/Import</h2>
+  <div class="section">
+    <p>When exporting an environment JSON, the current map view is now saved:</p>
+
+    <pre><code>{
+  "map_view": {
+    "bounds": { "south": 37.70, "north": 37.85, "west": -122.51, "east": -122.36 },
+    "center": { "lat": 37.775, "lng": -122.435 },
+    "zoom": 13
+  }
+}</code></pre>
+
+    <p>When importing, <code>restoreMapView()</code> restores the geographic area so users see the same map location as when the environment was saved.</p>
+  </div>
+
+  <hr>
+
+  <h2 id="grid-reference">5. Grid Distance & Drone Speed Reference</h2>
+  <div class="section">
+    <h3>Grid-to-Real-World Distance</h3>
+    <p>The coordinate system maps geographic coordinates to a 100×100 grid:</p>
+
+    <table>
+      <tr><th>Parameter</th><th>Value</th></tr>
+      <tr><td>Default bounds</td><td>0.15° latitude × 0.15° longitude</td></tr>
+      <tr><td>Grid size</td><td>100 × 100 units</td></tr>
+      <tr><td>1 grid unit (N-S direction)</td><td>~166.5 meters</td></tr>
+      <tr><td>1 grid unit (E-W direction)</td><td>~132 meters (at lat ~37.77°)</td></tr>
+      <tr><td><strong>Average</strong></td><td><strong>~150 meters per grid unit</strong></td></tr>
+    </table>
+
+    <h3>How It's Calculated</h3>
+    <pre><code>Latitude:  1° ≈ 111 km
+           0.15° ≈ 16.65 km
+           100 units = 16,650m → 166.5 m/unit
+
+Longitude: 1° ≈ 111 km × cos(37.77°) ≈ 88 km
+           0.15° ≈ 13.2 km
+           100 units = 13,200m → 132 m/unit
+
+Average: (166.5 + 132) / 2 ≈ 150 m/unit</code></pre>
+
+    <h3>Drone Speed</h3>
+    <p>When drone speed is set to <strong>1</strong>:</p>
+    <ul>
+      <li>Drone travels <strong>1 grid unit per time unit</strong></li>
+      <li>This equals approximately <strong>150 meters per time unit</strong></li>
+    </ul>
+
+    <h3>Fuel Budget Interpretation</h3>
+    <p>Since fuel is measured in grid units of distance:</p>
+    <table>
+      <tr><th>Fuel Budget</th><th>Approximate Range</th></tr>
+      <tr><td>100 units</td><td>~15 km</td></tr>
+      <tr><td>150 units</td><td>~22.5 km</td></tr>
+      <tr><td>200 units</td><td>~30 km</td></tr>
+      <tr><td>250 units</td><td>~37.5 km</td></tr>
+      <tr><td>300 units</td><td>~45 km</td></tr>
+    </table>
+
+    <h3>Practical Example</h3>
+    <p>A drone with <strong>fuel budget = 150</strong>:</p>
+    <ul>
+      <li>Can travel approximately <strong>22.5 km</strong> total distance</li>
+      <li>At speed = 1, this takes <strong>150 time units</strong></li>
+      <li>Must return to an airport before exhausting fuel</li>
+      <li>With a round-trip mission, effective radius is ~11 km from start airport</li>
+    </ul>
+  </div>
+
+  <hr>
+
+  <h2 id="files-modified">6. Files Modified</h2>
+  <div class="section">
+    <table>
+      <tr><th>File</th><th>Changes</th></tr>
+      <tr>
+        <td><code>webapp/isr.js</code></td>
+        <td>
+          <ul>
+            <li>Added Leaflet map integration (~190 lines)</li>
+            <li>Grid/Map toggle and tile layer selection</li>
+            <li>Coordinate transformation functions</li>
+            <li>Fixed <code>updateStatsFromAnimation()</code></li>
+            <li>Added <code>restoreMapView()</code></li>
+            <li>Added map_view to environment exports</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td><code>webapp/index.html</code></td>
+        <td>Added Leaflet CSS/JS includes and Grid/Map toggle buttons</td>
+      </tr>
+    </table>
+  </div>
+
+  <hr>
+
+  <h2 id="commits">7. Commit Details</h2>
+  <div class="section">
+    <h3>Commit 1: Map Integration</h3>
+    <pre><code>commit 264efc5
+Date: April 14, 2026 15:05
+
+feat: Map integration — Leaflet underlay with Grid/Map toggle and pan
+
+- Grid/Map toggle buttons in canvas header
+- Street/Satellite tile layer selection
+- Leaflet map renders behind transparent canvas in map mode
+- Elements (targets, airports, SAMs, trajectories) pinned to geographic coordinates
+- Pan support: drag to pan when not in edit mode
+- Edit mode: canvas captures clicks for placing elements
+- w2c uses Leaflet latLngToContainerPoint in map mode
+- canvasToWorld uses Leaflet containerPointToLatLng in map mode
+- Default bounds: San Francisco area (configurable)
+- No CSS changes — map div created dynamically by JS
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;</code></pre>
+
+    <h3>Commit 2: Stats Fix</h3>
+    <pre><code>commit 975a089
+Date: April 15, 2026
+
+fix: Animation stats now consistent with solver stats
+
+- Animation stats were showing different fuel values than solve stats
+- Root cause: animation used trajectory-based distanceTraveled while
+  solve stats used routeInfo.distance (solver's computed value)
+- Fixed updateStatsFromAnimation() to use routeInfo.distance consistently
+- Also added map view export/import (saves center lat/lng, zoom, bounds)
+- Added debug warning for distance mismatches in refueling drones
+
+Co-Authored-By: Claude Opus 4.5 &lt;noreply@anthropic.com&gt;</code></pre>
+  </div>
+
+  <hr>
+
+  <div style="text-align: center; color: #6b7280; margin-top: 40px; padding: 20px;">
+    <p>ISR Mission Planner - Development Session Summary</p>
+    <p>April 15, 2026</p>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+# ISR Mission Planning - Railway Deployment
+# Optimized Dockerfile for Railway.app
+
+# Official python image via AWS's public mirror of Docker Hub's library images:
+# same image, but builds don't fail when Docker Hub is down or rate-limits
+# Railway's builders (deploy of 6a763ed failed that way on 2026-10-09).
+FROM public.ecr.aws/docker/library/python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Copy Held–Karp orienteering solver to container root so
+# `from orienteering_with_matrix import ...` works.
+COPY orienteering_with_matrix.py /app/orienteering_with_matrix.py
+
+# Install system dependencies (including tkinter for matplotlib)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    curl \
+    tk \
+    libtk8.6 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set matplotlib to use non-GUI backend (Agg) to avoid tkinter issues
+ENV MPLBACKEND=Agg
+
+# Copy requirements first (for caching)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY server/ /app/server/
+COPY webapp/ /app/webapp/
+COPY path_planning_core/ /app/path_planning_core/
+# Platform + sensor catalog (server/asset_catalog.py reads /app/catalog/asset_catalog.json)
+COPY catalog/ /app/catalog/
+
+# Create __init__.py files for proper imports (only for dirs that don't have them)
+RUN touch /app/__init__.py && \
+    touch /app/server/__init__.py && \
+    touch /app/server/agents/__init__.py && \
+    touch /app/server/solver/__init__.py && \
+    touch /app/server/database/__init__.py && \
+    touch /app/webapp/__init__.py && \
+    touch /app/webapp/editor/__init__.py && \
+    touch /app/webapp/editor/solver/__init__.py && \
+    touch /app/path_planning_core/__init__.py
+
+# Set Python path
+ENV PYTHONPATH=/app
+
+# Railway uses $PORT environment variable
+ENV PORT=8893
+EXPOSE $PORT
+
+# Run the application - Railway provides $PORT at runtime
+CMD python -m uvicorn server.main:app --host 0.0.0.0 --port ${PORT:-8893}

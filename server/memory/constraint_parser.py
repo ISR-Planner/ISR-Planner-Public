@@ -1,0 +1,822 @@
+"""
+LLM Constraint Parser
+
+Parses natural language constraint requests into ConstraintProgram objects.
+Uses a small LLM to extract:
+1. Allocation operations (FORCE_VISIT, MOVE, REMOVE, SWAP, INSERT)
+2. Sequencing hints for Strategist interpretation
+
+The parser is designed to be called by the Coordinator or Strategist agent
+when processing user requests that modify mission constraints.
+"""
+
+import json
+import re
+from dataclasses import dataclass
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional, Tuple
+
+from ..solver.constraints import validate_and_normalize_constraints
+from .algorithm_registry import (
+    AlgorithmCommandType,
+    get_algorithm_command_patterns,
+    resolve_algorithm_alias,
+)
+from .constraints import (
+    ConstraintProgram,
+)
+
+
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+# =============================================================================
+# Parser Prompt Templates
+# =============================================================================
+
+CONSTRAINT_EXTRACTION_PROMPT = """You are a constraint parser for an ISR (Intelligence, Surveillance, Reconnaissance) mission planning system.  # noqa: E501
+
+Given a user's natural language request, extract:
+1. **Allocation operations** - specific changes to target-drone assignments
+2. **Sequencing hints** - guidance about visit order, priority, or timing
+
+## Allocation Operations
+
+Extract these operations when the user explicitly requests them:
+
+- **FORCE_VISIT**: User wants specific targets to be visited
+  Example: "Make sure we visit T5 and T8"
+
+- **MOVE**: User wants to assign a target to a specific drone
+  Example: "Move T5 to D1", "Assign T8 to drone 2"
+
+- **REMOVE**: User wants to exclude a target from the mission
+  Example: "Skip T3", "Don't visit T5"
+
+- **SWAP**: User wants to exchange targets between drones
+  Example: "Swap T5 and T8 between their drones"
+
+- **INSERT**: User wants to add an unvisited target to a route
+  Example: "Add T9 to the mission", "Insert T10 into D1's route"
+
+## Ordering Constraints (HARD — exact, DP-solved requirements)
+
+Extract these when the user names a SPECIFIC, EXACT target-ordering rule. These
+are solved EXACTLY (the route optimizer will never violate them) — use them
+whenever the request names specific target(s) for a specific position, not a
+category/threshold:
+
+- **first**: One specific target must be the very first stop.
+  Example: "Visit T5 first", "T5 should be first", "start with T5" (single target)
+
+- **last**: One specific target must be the very last stop before landing.
+  Example: "Make T5 the last target", "T5 should be last", "end with T5" (single target)
+
+- **before**: One target must come somewhere before another (not necessarily
+  adjacent). List of [a, b] pairs.
+  Example: "Visit T1 before T2" → before: [["T1","T2"]]
+
+- **adjacent**: One target must come IMMEDIATELY after another, nothing between.
+  Example: "Visit T6 right after T5" → adjacent: [["T5","T6"]]
+
+## Sequencing Hints (SOFT — fuzzy guidance, not a hard guarantee)
+
+Extract these ONLY when the user's request is about a CATEGORY or THRESHOLD
+(priority level, target type), not a specific named target — there's no single
+correct target to pin down, so this can't be a hard constraint:
+
+- **start_with**: Begin with a category of targets (NOT a single named target —
+  that's `first` above).
+  Example: "Start with priority 10 targets", "begin with high-priority targets"
+
+- **end_with**: End with a category of targets before returning (NOT a single
+  named target — that's `last` above). Multiple candidate targets where the
+  solver picks the best one still counts as a hint, not a hard constraint.
+  Example: "End with whichever of T5 or T8 is closer"
+
+- **priority_order**: User wants targets visited in priority order generally.
+  Example: "Visit high priority targets first, then complete the mission"
+
+- **segment_by_priority**: User wants mission split by priority threshold.
+  Example: "Complete all priority > 7 targets first, then handle the rest"
+
+## Environment Context
+
+Available targets: {target_ids}
+Available drones: {drone_ids}
+Target priorities: {target_priorities}
+
+## User Request
+
+{user_message}
+
+## Output Format
+
+Respond with a JSON object:
+```json
+{{
+  "allocation_ops": [
+    {{"op": "FORCE_VISIT", "targets": ["T5", "T8"]}},
+    {{"op": "MOVE", "target": "T5", "to_drone": "1"}},
+    {{"op": "REMOVE", "target": "T3", "reason": "user requested skip"}},
+    {{"op": "SWAP", "target_a": "T5", "target_b": "T8"}},
+    {{"op": "INSERT", "target": "T9", "drone_id": "1"}}
+  ],
+  "ordering_constraints": {{
+    "first": "T5",
+    "last": "T3",
+    "before": [["T1", "T2"]],
+    "adjacent": [["T5", "T6"]]
+  }},
+  "sequencing_hints": {{
+    "start_with": {{"targets": ["T5"]}} or {{"priority_gte": 10}},
+    "end_with": {{"targets": ["T5", "T8"]}},
+    "priority_order": "high_first" or "low_first",
+    "segment_by_priority": {{"threshold": 7, "order": "high_first"}}
+  }},
+  "confidence": 0.95,
+  "ambiguities": ["unclear which drone for T9"]
+}}
+```
+
+Only include operations/hints/constraints that are clearly requested. If nothing is requested, return empty
+arrays/objects — omit "first"/"last" fields entirely if not requested, don't set them to null or empty string.
+If there are ambiguities that would benefit from clarification, list them.
+
+IMPORTANT: a single named target for first/last/before/adjacent goes in ordering_constraints, NEVER in
+sequencing_hints — sequencing_hints is reserved for category/threshold-based requests where no single
+specific target is named."""
+
+
+# =============================================================================
+# Regex-based fallback parser
+# =============================================================================
+
+
+def _parse_target_ids(text: str) -> List[str]:
+    """Extract target IDs (T1, T2, etc.) from text."""
+    return re.findall(r"T\d+", text.upper())
+
+
+def _parse_drone_ids(text: str) -> List[str]:
+    """Extract drone IDs from text, normalizing to just the number."""
+    # Match "D1", "D2", "drone 1", "drone 2", etc.
+    matches = re.findall(r"(?:D|DRONE\s*)(\d+)", text.upper())
+    return matches
+
+
+def _parse_priority_threshold(text: str) -> Optional[int]:
+    """Extract priority threshold from text like 'priority > 7' or 'priority >= 8'."""
+    match = re.search(r"PRIORITY\s*[>>=]+\s*(\d+)", text.upper())
+    if match:
+        return int(match.group(1))
+    return None
+
+
+def regex_fallback_parse(
+    user_message: str,
+    target_ids: List[str],
+    drone_ids: List[str],
+) -> Tuple[List[Dict[str, Any]], Dict[str, Any], Dict[str, Any]]:
+    """
+    Regex-based fallback parser for when LLM is unavailable.
+
+    Returns:
+        (allocation_ops, sequencing_hints, ordering_constraints_raw)
+
+    ordering_constraints_raw only covers the unambiguous single-target
+    "first"/"last" phrasings ("visit T7 first", "make T3 the last target") —
+    before/adjacent pairs are too ambiguous to regex reliably and are left
+    to the LLM path. Not yet validated here (validate_and_normalize_
+    constraints runs in _build_program, which has target_ids in scope).
+    """
+    msg = user_message.upper()
+    allocation_ops: List[Dict[str, Any]] = []
+    sequencing_hints: Dict[str, Any] = {}
+    ordering_constraints_raw: Dict[str, Any] = {}
+
+    # --- Allocation operations ---
+
+    # MOVE: "move T5 to D1", "assign T8 to drone 2"
+    move_pattern = r"(?:MOVE|ASSIGN|REASSIGN|TRANSFER|GIVE)\s+(T\d+(?:\s*(?:,|AND)\s*T\d+)*)\s+(?:TO|INTO)\s+(?:D|DRONE\s*)(\d+)"  # noqa: E501
+    for match in re.finditer(move_pattern, msg):
+        targets_str, drone_id = match.groups()
+        for tid in _parse_target_ids(targets_str):
+            allocation_ops.append(
+                {
+                    "op": "MOVE",
+                    "target": tid,
+                    "to_drone": drone_id,
+                }
+            )
+
+    # REMOVE: "skip T3", "don't visit T5", "exclude T8"
+    remove_pattern = r"(?:SKIP|DON\'?T\s+VISIT|EXCLUDE|REMOVE|FORBID)\s+(T\d+(?:\s*(?:,|AND)\s*T\d+)*)"
+    for match in re.finditer(remove_pattern, msg):
+        targets_str = match.group(1)
+        for tid in _parse_target_ids(targets_str):
+            allocation_ops.append(
+                {
+                    "op": "REMOVE",
+                    "target": tid,
+                    "reason": "user requested exclusion",
+                }
+            )
+
+    # FORCE_VISIT: "make sure we visit T5", "must visit T8", "visit T5 and T8"
+    force_pattern = r"(?:MAKE\s+SURE|MUST|ENSURE|FORCE)\s+(?:WE\s+)?VISIT\s+(T\d+(?:\s*(?:,|AND)\s*T\d+)*)"
+    for match in re.finditer(force_pattern, msg):
+        targets_str = match.group(1)
+        targets = _parse_target_ids(targets_str)
+        if targets:
+            allocation_ops.append(
+                {
+                    "op": "FORCE_VISIT",
+                    "targets": targets,
+                }
+            )
+
+    # SWAP: "swap T5 and T8"
+    swap_pattern = r"SWAP\s+(T\d+)\s+(?:AND|WITH)\s+(T\d+)"
+    for match in re.finditer(swap_pattern, msg):
+        target_a, target_b = match.groups()
+        allocation_ops.append(
+            {
+                "op": "SWAP",
+                "target_a": target_a,
+                "target_b": target_b,
+            }
+        )
+
+    # INSERT: "add T9 to the mission", "insert T10"
+    insert_pattern = r"(?:ADD|INSERT)\s+(T\d+)(?:\s+(?:TO|INTO)\s+(?:D|DRONE\s*)(\d+))?"
+    for match in re.finditer(insert_pattern, msg):
+        target = match.group(1)
+        drone_id = match.group(2)  # May be None
+        op = {"op": "INSERT", "target": target}
+        if drone_id:
+            op["drone_id"] = drone_id
+        allocation_ops.append(op)
+
+    # --- Sequencing hints ---
+
+    # Priority threshold segmentation: "priority > 7 first", "targets with priority > 7 first"
+    priority_threshold = _parse_priority_threshold(user_message)
+    if priority_threshold and "FIRST" in msg:
+        sequencing_hints["segment_by_priority"] = {
+            "threshold": priority_threshold,
+            "order": "high_first",
+        }
+    # General priority ordering: "high priority first" (without specific threshold)
+    elif "HIGH" in msg and "PRIORITY" in msg and "FIRST" in msg:
+        sequencing_hints["priority_order"] = "high_first"
+
+    # Start with: "start with T5", "begin with priority 10 targets"
+    # Pattern for targets: "start with T5"
+    start_target_pattern = r"(?:START|BEGIN)\s+WITH\s+(T\d+(?:\s*(?:,|AND)\s*T\d+)*)"
+    start_target_match = re.search(start_target_pattern, msg)
+    if start_target_match:
+        targets = _parse_target_ids(start_target_match.group(1))
+        if targets:
+            sequencing_hints["start_with"] = {"targets": targets}
+
+    # Pattern for priority: "start with priority 10 targets"
+    if "start_with" not in sequencing_hints:
+        start_priority_pattern = r"(?:START|BEGIN)\s+WITH\s+(?:A\s+)?PRIORITY\s*(\d+)"
+        start_priority_match = re.search(start_priority_pattern, msg)
+        if start_priority_match:
+            threshold = int(start_priority_match.group(1))
+            sequencing_hints["start_with"] = {"priority_gte": threshold}
+
+    # Pattern for "visit priority X first" or "priority X target first"
+    if "start_with" not in sequencing_hints:
+        visit_priority_first_pattern = (
+            r"(?:VISIT|HIT|FLY\s+TO)?\s*(?:A\s+)?PRIORITY\s*(\d+)\s+(?:TARGET\s+)?FIRST"
+        )
+        visit_first_match = re.search(visit_priority_first_pattern, msg)
+        if visit_first_match:
+            threshold = int(visit_first_match.group(1))
+            sequencing_hints["start_with"] = {"priority_gte": threshold}
+
+    # Pattern for "every drone must visit a priority X target first"
+    if "start_with" not in sequencing_hints:
+        every_drone_pattern = r"(?:EVERY|EACH|ALL)\s+DRONE[S]?\s+(?:MUST|SHOULD|WILL|SHALL)\s+(?:FIRST\s+)?VISIT\s+(?:A\s+)?PRIORITY\s*(\d+)\s+(?:TARGET\s+)?(?:FIRST)?"  # noqa: E501
+        every_drone_match = re.search(every_drone_pattern, msg)
+        if every_drone_match:
+            threshold = int(every_drone_match.group(1))
+            sequencing_hints["start_with"] = {"priority_gte": threshold}
+
+    # Pattern for "first target must be priority X" or "first visit priority X"
+    if "start_with" not in sequencing_hints:
+        first_must_pattern = r"FIRST\s+(?:TARGET|VISIT|STOP)\s+(?:MUST\s+BE|SHOULD\s+BE|HAS\s+TO\s+BE)?\s*(?:A\s+)?PRIORITY\s*(\d+)"  # noqa: E501
+        first_must_match = re.search(first_must_pattern, msg)
+        if first_must_match:
+            threshold = int(first_must_match.group(1))
+            sequencing_hints["start_with"] = {"priority_gte": threshold}
+
+    # Pattern for "drones have to start by visiting a target of priority X"
+    # Handles: "all drones have to start by directly visiting a target of priority 10"
+    if "start_with" not in sequencing_hints:
+        start_by_visiting_pattern = r"(?:DRONE[S]?\s+)?(?:HAVE\s+TO|NEED\s+TO|MUST|SHOULD)\s+START\s+(?:BY\s+)?(?:DIRECTLY\s+)?(?:VISIT(?:ING)?|FLY(?:ING)?\s+TO)\s+(?:A\s+)?TARGET\s+(?:OF\s+)?PRIORITY\s*(\d+)"  # noqa: E501
+        start_by_match = re.search(start_by_visiting_pattern, msg)
+        if start_by_match:
+            threshold = int(start_by_match.group(1))
+            sequencing_hints["start_with"] = {"priority_gte": threshold}
+
+    # Pattern for "target of priority X" anywhere with "first" or "start"
+    # Handles: "a target of priority 10 first", "start with a target of priority 10"
+    if "start_with" not in sequencing_hints:
+        target_of_priority_pattern = r"(?:START|BEGIN|FIRST)\s+.*?TARGET\s+(?:OF\s+)?PRIORITY\s*(\d+)|TARGET\s+(?:OF\s+)?PRIORITY\s*(\d+)\s+.*?(?:FIRST|START)"  # noqa: E501
+        target_of_match = re.search(target_of_priority_pattern, msg)
+        if target_of_match:
+            threshold = int(target_of_match.group(1) or target_of_match.group(2))
+            sequencing_hints["start_with"] = {"priority_gte": threshold}
+
+    # Pattern for "priority X target" with "first" or "start" anywhere
+    if "start_with" not in sequencing_hints:
+        priority_x_first_pattern = r"PRIORITY\s*(\d+)\s+TARGET.*?(?:FIRST|START)|(?:FIRST|START).*?PRIORITY\s*(\d+)\s+TARGET"  # noqa: E501
+        priority_first_match = re.search(priority_x_first_pattern, msg)
+        if priority_first_match:
+            threshold = int(
+                priority_first_match.group(1) or priority_first_match.group(2)
+            )
+            sequencing_hints["start_with"] = {"priority_gte": threshold}
+
+    # Pattern for "first target ... has to be ... priority X" or "first target ... be of priority X"
+    # Handles: "the first target a drone visits has to be of priority 10"
+    if "start_with" not in sequencing_hints:
+        first_target_has_to_be_pattern = r"FIRST\s+TARGET\s+.*?(?:HAS\s+TO\s+BE|MUST\s+BE|SHOULD\s+BE|BE)\s+(?:OF\s+)?PRIORITY\s*(\d+)"  # noqa: E501
+        first_target_match = re.search(first_target_has_to_be_pattern, msg)
+        if first_target_match:
+            threshold = int(first_target_match.group(1))
+            sequencing_hints["start_with"] = {"priority_gte": threshold}
+
+    # Pattern for "visits has to be of priority X" or similar
+    # Handles: "This time the first target a drone visits has to be of priority 10"
+    if "start_with" not in sequencing_hints:
+        visits_priority_pattern = r"(?:FIRST\s+TARGET|VISIT[S]?)\s+.*?(?:HAS\s+TO|MUST|SHOULD)\s+BE\s+(?:OF\s+)?PRIORITY\s*(\d+)"  # noqa: E501
+        visits_match = re.search(visits_priority_pattern, msg)
+        if visits_match:
+            threshold = int(visits_match.group(1))
+            sequencing_hints["start_with"] = {"priority_gte": threshold}
+
+    # End with patterns - multiple approaches to catch various phrasings
+    # Pattern 1: "make T5 and T8 the last targets"
+    make_last_pattern = r"MAKE\s+(T\d+(?:\s*(?:,|AND)\s*T\d+)*)\s+(?:THE\s+)?LAST"
+    make_last_match = re.search(make_last_pattern, msg)
+    if make_last_match:
+        targets = _parse_target_ids(make_last_match.group(1))
+        if targets:
+            sequencing_hints["end_with"] = {"targets": targets}
+
+    # Pattern 2: "T5 and T8 should be the last targets"
+    if "end_with" not in sequencing_hints:
+        should_last_pattern = (
+            r"(T\d+(?:\s*(?:,|AND)\s*T\d+)*)\s+(?:SHOULD\s+BE|ARE)\s+(?:THE\s+)?LAST"
+        )
+        should_last_match = re.search(should_last_pattern, msg)
+        if should_last_match:
+            targets = _parse_target_ids(should_last_match.group(1))
+            if targets:
+                sequencing_hints["end_with"] = {"targets": targets}
+
+    # Pattern 3: "end with T5 and T8"
+    if "end_with" not in sequencing_hints:
+        end_with_pattern = r"END\s+WITH\s+(T\d+(?:\s*(?:,|AND)\s*T\d+)*)"
+        end_with_match = re.search(end_with_pattern, msg)
+        if end_with_match:
+            targets = _parse_target_ids(end_with_match.group(1))
+            if targets:
+                sequencing_hints["end_with"] = {"targets": targets}
+
+    # Pattern 4: "last targets before landing/returning are T5 and T8"
+    if "end_with" not in sequencing_hints:
+        last_before_pattern = r"LAST\s+TARGETS?\s+(?:BEFORE\s+(?:LANDING|RETURN)(?:ING)?(?:\s+(?:ARE|SHOULD\s+BE))?\s*)?(T\d+(?:\s*(?:,|AND)\s*T\d+)*)"  # noqa: E501
+        last_before_match = re.search(last_before_pattern, msg)
+        if last_before_match:
+            targets = _parse_target_ids(last_before_match.group(1))
+            if targets:
+                sequencing_hints["end_with"] = {"targets": targets}
+
+    # --- Hard ordering constraints (exact first/last, single target only) ---
+
+    # "visit T7 first", "T7 first", "start with T7 first" (single target only —
+    # multi-target "start with" is inherently ambiguous about ORDER among
+    # them, so that stays a soft sequencing hint above, not a hard constraint).
+    single_first_pattern = r"(?:VISIT\s+)?(T\d+)\s+FIRST\b"
+    single_first_match = re.search(single_first_pattern, msg)
+    if single_first_match:
+        ordering_constraints_raw["first"] = single_first_match.group(1)
+
+    # "make T3 the last target", "T3 last", "end with T3" (single target)
+    single_last_pattern = r"(?:MAKE\s+)?(T\d+)\s+(?:THE\s+)?LAST\b|LAST\s+TARGET\s+(?:IS|SHOULD\s+BE)\s+(T\d+)"  # noqa: E501
+    single_last_match = re.search(single_last_pattern, msg)
+    if single_last_match:
+        ordering_constraints_raw["last"] = single_last_match.group(
+            1
+        ) or single_last_match.group(2)
+
+    return allocation_ops, sequencing_hints, ordering_constraints_raw
+
+
+# =============================================================================
+# Algorithm Command Parsing
+# =============================================================================
+
+
+def parse_algorithm_commands(user_message: str) -> Dict[str, Any]:
+    """
+    Parse user message for explicit algorithm commands.
+
+    Detects commands like:
+    - "use the greedy allocation strategy"
+    - "only run swap optimization"
+    - "skip crossing removal"
+    - "use the held-karp solver"
+
+    Returns:
+        Dict with keys:
+        - allocation_strategy: str (canonical algorithm ID)
+        - optimizer_include: List[str] (only run these optimizers)
+        - optimizer_exclude: List[str] (skip these optimizers)
+        - solver_algorithm: str (canonical algorithm ID)
+    """
+    commands: Dict[str, Any] = {}
+
+    patterns = get_algorithm_command_patterns()
+
+    for pattern, command_type in patterns:
+        match = pattern.search(user_message)
+        if match:
+            value = match.group(1).lower()
+
+            # Resolve alias to canonical algorithm ID
+            if command_type == AlgorithmCommandType.ALLOCATION_STRATEGY:
+                canonical = resolve_algorithm_alias(value, "allocation")
+                if canonical:
+                    commands["allocation_strategy"] = canonical
+
+            elif command_type == AlgorithmCommandType.OPTIMIZER_INCLUDE:
+                canonical = resolve_algorithm_alias(value, "optimizer")
+                if canonical:
+                    if "optimizer_include" not in commands:
+                        commands["optimizer_include"] = []
+                    if canonical not in commands["optimizer_include"]:
+                        commands["optimizer_include"].append(canonical)
+
+            elif command_type == AlgorithmCommandType.OPTIMIZER_EXCLUDE:
+                canonical = resolve_algorithm_alias(value, "optimizer")
+                if canonical:
+                    if "optimizer_exclude" not in commands:
+                        commands["optimizer_exclude"] = []
+                    if canonical not in commands["optimizer_exclude"]:
+                        commands["optimizer_exclude"].append(canonical)
+
+            elif command_type == AlgorithmCommandType.SOLVER_ALGORITHM:
+                canonical = resolve_algorithm_alias(value, "solver")
+                if canonical:
+                    commands["solver_algorithm"] = canonical
+
+    return commands
+
+
+def should_include_algorithm_explanation(user_message: str) -> bool:
+    """
+    Check if user is asking about algorithms used.
+
+    Returns True if the message contains patterns like:
+    - "what algorithm did you use"
+    - "how did you solve this"
+    - "explain the algorithm"
+    """
+    msg_lower = user_message.lower()
+
+    patterns = [
+        r"what\s+algorithm",
+        r"which\s+algorithm",
+        r"how\s+did\s+you\s+(?:solve|optimize|allocate|plan)",
+        r"what\s+(?:method|approach|strategy)\s+did\s+you\s+use",
+        r"explain\s+(?:the\s+)?algorithm",
+        r"what\s+optimizer",
+        r"what\s+solver",
+    ]
+
+    for pattern in patterns:
+        if re.search(pattern, msg_lower):
+            return True
+
+    return False
+
+
+# =============================================================================
+# Parser Result
+# =============================================================================
+
+
+@dataclass
+class ParseResult:
+    """Result of parsing a user constraint request."""
+
+    program: ConstraintProgram
+    confidence: float
+    ambiguities: List[str]
+    used_llm: bool
+    raw_extraction: Optional[Dict[str, Any]] = None
+    algorithm_commands: Optional[Dict[str, Any]] = None  # Explicit algorithm choices
+    asks_about_algorithms: bool = False  # User wants algorithm explanation
+
+
+# =============================================================================
+# Main Parser Class
+# =============================================================================
+
+
+class ConstraintParser:
+    """
+    Parses natural language into ConstraintProgram objects.
+
+    Can use either LLM-based extraction or regex fallback.
+    """
+
+    def __init__(
+        self,
+        llm_client: Optional[Any] = None,
+        model: str = "gpt-4o-mini",
+        use_llm: bool = True,
+    ):
+        """
+        Initialize the parser.
+
+        Args:
+            llm_client: Optional provider client for LLM-based parsing
+            model: Model to use for LLM parsing
+            use_llm: Whether to attempt LLM parsing (falls back to regex if unavailable)
+        """
+        self.llm_client = llm_client
+        self.model = model
+        self.use_llm = use_llm and llm_client is not None
+
+    def _build_context(
+        self,
+        environment: Dict[str, Any],
+        drone_configs: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Build context for the extraction prompt."""
+        # Extract target info
+        targets = environment.get("targets", [])
+        target_ids = sorted([str(t.get("id", t.get("label", ""))) for t in targets])
+        target_priorities = {
+            str(t.get("id", t.get("label", ""))): t.get("priority", 5) for t in targets
+        }
+
+        # Extract drone info
+        drone_ids = sorted([str(d) for d in drone_configs.keys()])
+
+        return {
+            "target_ids": target_ids,
+            "drone_ids": drone_ids,
+            "target_priorities": target_priorities,
+        }
+
+    def _llm_parse(
+        self,
+        user_message: str,
+        context: Dict[str, Any],
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Use LLM to extract constraints from user message.
+
+        Returns parsed JSON or None if LLM unavailable/failed.
+        """
+        if not self.llm_client:
+            return None
+
+        prompt = CONSTRAINT_EXTRACTION_PROMPT.format(
+            target_ids=", ".join(context["target_ids"]),
+            drone_ids=", ".join(f"D{d}" for d in context["drone_ids"]),
+            target_priorities=json.dumps(context["target_priorities"]),
+            user_message=user_message,
+        )
+
+        try:
+            response = self.llm_client.messages.create(
+                model=self.model,
+                max_tokens=1024,
+                messages=[{"role": "user", "content": prompt}],
+            )
+
+            # Extract JSON from response
+            content = response.content[0].text
+            # Try to find JSON block
+            json_match = re.search(r"```(?:json)?\s*([\s\S]*?)\s*```", content)
+            if json_match:
+                json_str = json_match.group(1)
+            else:
+                # Assume entire response is JSON
+                json_str = content
+
+            return json.loads(json_str)
+
+        except Exception as e:
+            # Log but don't fail - fall back to regex
+            print(f"[ConstraintParser] LLM parse failed: {e}")
+            return None
+
+    def _build_program(
+        self,
+        allocation_ops: List[Dict[str, Any]],
+        sequencing_hints: Dict[str, Any],
+        original_text: str,
+        ordering_constraints_raw: Optional[Dict[str, Any]] = None,
+        target_ids: Optional[List[str]] = None,
+    ) -> ConstraintProgram:
+        """Build a ConstraintProgram from extracted operations and hints.
+
+        ordering_constraints_raw (first/last/before/adjacent) is validated
+        HERE via validate_and_normalize_constraints, before being attached to
+        the program — a malformed or contradictory constraint becomes a
+        program.errors entry immediately, at parse time, rather than failing
+        deep inside the solver later.
+        """
+        program = ConstraintProgram(
+            source="user",
+            original_text=original_text,
+            parsed_at=_utc_now_iso(),
+        )
+
+        # Add allocation operations
+        for op in allocation_ops:
+            op_type = op.get("op", "").upper()
+
+            if op_type == "FORCE_VISIT":
+                program.add_force_visit(
+                    targets=op.get("targets", []),
+                    scope=op.get("scope", "global"),
+                    drone_id=op.get("drone_id"),
+                )
+            elif op_type == "MOVE":
+                program.add_move(
+                    target=op.get("target", ""),
+                    to_drone=op.get("to_drone", ""),
+                    lock=op.get("lock", True),
+                )
+            elif op_type == "REMOVE":
+                program.add_remove(
+                    target=op.get("target", ""),
+                    reason=op.get("reason"),
+                )
+            elif op_type == "SWAP":
+                program.add_swap(
+                    target_a=op.get("target_a", ""),
+                    target_b=op.get("target_b", ""),
+                    drone_a=op.get("drone_a"),
+                    drone_b=op.get("drone_b"),
+                )
+            elif op_type == "INSERT":
+                program.add_insert(
+                    target=op.get("target", ""),
+                    drone_id=op.get("drone_id"),
+                    position=op.get("position"),
+                )
+            else:
+                program.warnings.append(f"Unknown operation type: {op_type}")
+
+        # Add sequencing hints
+        if sequencing_hints:
+            program.set_sequencing_hints(sequencing_hints)
+
+        # Add hard ordering constraints (first/last/before/adjacent) — validate
+        # immediately so a malformed/contradictory request surfaces as a clear
+        # error now, not a mysterious solver failure later.
+        if ordering_constraints_raw:
+            try:
+                validated = validate_and_normalize_constraints(
+                    ordering_constraints_raw, set(target_ids or [])
+                )
+                program.set_ordering_constraints(validated)
+            except ValueError as e:
+                program.errors.append(f"Invalid ordering constraints: {e}")
+
+        return program
+
+    def parse(
+        self,
+        user_message: str,
+        environment: Optional[Dict[str, Any]] = None,
+        drone_configs: Optional[Dict[str, Any]] = None,
+    ) -> ParseResult:
+        """
+        Parse a user message into a ConstraintProgram.
+
+        Args:
+            user_message: The natural language constraint request
+            environment: Environment data (targets, airports, SAMs)
+            drone_configs: Drone configurations
+
+        Returns:
+            ParseResult with the program, confidence, and any ambiguities
+        """
+        environment = environment or {}
+        drone_configs = drone_configs or {}
+
+        context = self._build_context(environment, drone_configs)
+        raw_extraction = None
+        confidence = 0.5
+        ambiguities: List[str] = []
+
+        # Parse algorithm commands (always use regex for this)
+        algorithm_commands = parse_algorithm_commands(user_message)
+        asks_about_algorithms = should_include_algorithm_explanation(user_message)
+
+        # Try LLM parsing first
+        if self.use_llm:
+            llm_result = self._llm_parse(user_message, context)
+            if llm_result:
+                _used_llm = True  # noqa: F841
+                raw_extraction = llm_result
+                allocation_ops = llm_result.get("allocation_ops", [])
+                sequencing_hints = llm_result.get("sequencing_hints", {})
+                ordering_constraints_raw = llm_result.get("ordering_constraints")
+                confidence = llm_result.get("confidence", 0.8)
+                ambiguities = llm_result.get("ambiguities", [])
+
+                program = self._build_program(
+                    allocation_ops,
+                    sequencing_hints,
+                    user_message,
+                    ordering_constraints_raw=ordering_constraints_raw,
+                    target_ids=context["target_ids"],
+                )
+
+                return ParseResult(
+                    program=program,
+                    confidence=confidence,
+                    ambiguities=ambiguities,
+                    used_llm=True,
+                    raw_extraction=raw_extraction,
+                    algorithm_commands=(
+                        algorithm_commands if algorithm_commands else None
+                    ),
+                    asks_about_algorithms=asks_about_algorithms,
+                )
+
+        # Fall back to regex parsing
+        allocation_ops, sequencing_hints, ordering_constraints_raw = (
+            regex_fallback_parse(
+                user_message,
+                context["target_ids"],
+                context["drone_ids"],
+            )
+        )
+
+        program = self._build_program(
+            allocation_ops,
+            sequencing_hints,
+            user_message,
+            ordering_constraints_raw=ordering_constraints_raw,
+            target_ids=context["target_ids"],
+        )
+
+        # Regex parsing has lower confidence
+        if allocation_ops or sequencing_hints or ordering_constraints_raw:
+            confidence = 0.6
+        else:
+            confidence = 0.3
+
+        return ParseResult(
+            program=program,
+            confidence=confidence,
+            ambiguities=ambiguities,
+            used_llm=False,
+            raw_extraction=None,
+            algorithm_commands=algorithm_commands if algorithm_commands else None,
+            asks_about_algorithms=asks_about_algorithms,
+        )
+
+
+# =============================================================================
+# Convenience function
+# =============================================================================
+
+
+def parse_constraints(
+    user_message: str,
+    environment: Optional[Dict[str, Any]] = None,
+    drone_configs: Optional[Dict[str, Any]] = None,
+    llm_client: Optional[Any] = None,
+) -> ParseResult:
+    """
+    Convenience function to parse constraints from a user message.
+
+    Args:
+        user_message: The natural language constraint request
+        environment: Environment data
+        drone_configs: Drone configurations
+        llm_client: Optional provider client for LLM parsing
+
+    Returns:
+        ParseResult with the ConstraintProgram
+    """
+    parser = ConstraintParser(llm_client=llm_client)
+    return parser.parse(user_message, environment, drone_configs)

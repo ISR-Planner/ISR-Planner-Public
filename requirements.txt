@@ -1,0 +1,50 @@
+## ISR Mission Planning Web Application
+# Install with: pip install -r requirements.txt
+
+# Web Framework
+fastapi>=0.122.0
+uvicorn>=0.38.0
+pydantic>=2.12.0
+python-dotenv>=1.2.0
+
+# LangGraph/LangChain for AI Agent
+langgraph>=0.6.11
+langchain>=0.3.27
+langchain-core>=0.3.80
+
+# Multi-Provider LLM Support
+langchain-openai>=0.3.2        # OpenAI/GPT models
+langchain-google-genai>=2.0.0  # Google Gemini models
+langchain-groq>=0.2.0          # Groq (Llama, Mixtral)
+
+# OpenAI (for GPT agent option)
+openai>=2.8.1
+
+# Scientific/Math
+numpy>=2.0.0
+scipy>=1.13.0
+matplotlib>=3.9.0
+
+# GNN planner (server/gnn). CPU wheels are sufficient; for a smaller install:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+torch>=2.3.0
+
+# Utilities
+requests>=2.32.0
+
+# Database
+supabase>=2.0.0
+
+# Optional: CrewAI entrant in the Comparison tab. Uncomment to enable.
+# Use a compatible Python version (e.g. 3.11 or 3.13); see README.md.
+# crewai>=0.100.0
+
+# Development Tools (for Makefile targets)
+autoflake==2.4.0
+isort==9.0.2
+black==26.5.1
+flake8>=7.0.0
+mypy>=1.9.0
+pytest>=8.0.0
+pytest-cov>=5.0.0
+

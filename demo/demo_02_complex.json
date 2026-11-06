@@ -1,0 +1,459 @@
+{
+  "schema": "isr_env_v1",
+  "is_segmented": false,
+  "segment_count": 1,
+  "name": "Demo 2: Complex Multi-Drone Mission",
+  "description": "20 targets, 5 drones with different capabilities, refueling, runway constraints",
+  "env": {
+    "airports": [
+      {
+        "id": "A1_L",
+        "lat": 37.62,
+        "lng": -122.4,
+        "runway": "L",
+        "type": "airport",
+        "name": "Main Base"
+      },
+      {
+        "id": "A2_L",
+        "lat": 37.8,
+        "lng": -122.05,
+        "runway": "L",
+        "type": "airport",
+        "name": "North Base"
+      },
+      {
+        "id": "A3_M",
+        "lat": 37.5,
+        "lng": -122.15,
+        "runway": "M",
+        "type": "airport",
+        "name": "South Forward"
+      },
+      {
+        "id": "A4_S",
+        "lat": 37.7,
+        "lng": -122.3,
+        "runway": "S",
+        "type": "airport",
+        "name": "West Outpost"
+      }
+    ],
+    "targets": [
+      {
+        "id": "T1",
+        "lat": 37.68,
+        "lng": -122.2,
+        "priority": 10,
+        "type": "a",
+        "name": "Primary Alpha"
+      },
+      {
+        "id": "T2",
+        "lat": 37.72,
+        "lng": -122.12,
+        "priority": 9,
+        "type": "a",
+        "name": "Primary Bravo"
+      },
+      {
+        "id": "T3",
+        "lat": 37.58,
+        "lng": -122.18,
+        "priority": 8,
+        "type": "b",
+        "name": "High Value 1"
+      },
+      {
+        "id": "T4",
+        "lat": 37.65,
+        "lng": -122.32,
+        "priority": 7,
+        "type": "a",
+        "name": "High Value 2"
+      },
+      {
+        "id": "T5",
+        "lat": 37.75,
+        "lng": -122.28,
+        "priority": 8,
+        "type": "b",
+        "name": "High Value 3"
+      },
+      {
+        "id": "T6",
+        "lat": 37.55,
+        "lng": -122.08,
+        "priority": 6,
+        "type": "c",
+        "name": "Medium 1"
+      },
+      {
+        "id": "T7",
+        "lat": 37.78,
+        "lng": -122.18,
+        "priority": 5,
+        "type": "a",
+        "name": "Medium 2"
+      },
+      {
+        "id": "T8",
+        "lat": 37.63,
+        "lng": -122.1,
+        "priority": 7,
+        "type": "b",
+        "name": "Medium 3"
+      },
+      {
+        "id": "T9",
+        "lat": 37.7,
+        "lng": -122.08,
+        "priority": 6,
+        "type": "a",
+        "name": "Medium 4"
+      },
+      {
+        "id": "T10",
+        "lat": 37.52,
+        "lng": -122.25,
+        "priority": 5,
+        "type": "c",
+        "name": "Medium 5"
+      },
+      {
+        "id": "T11",
+        "lat": 37.76,
+        "lng": -122.35,
+        "priority": 4,
+        "type": "a",
+        "name": "Low 1"
+      },
+      {
+        "id": "T12",
+        "lat": 37.6,
+        "lng": -122.28,
+        "priority": 4,
+        "type": "b",
+        "name": "Low 2"
+      },
+      {
+        "id": "T13",
+        "lat": 37.67,
+        "lng": -122.05,
+        "priority": 3,
+        "type": "c",
+        "name": "Low 3"
+      },
+      {
+        "id": "T14",
+        "lat": 37.82,
+        "lng": -122.15,
+        "priority": 3,
+        "type": "a",
+        "name": "Low 4"
+      },
+      {
+        "id": "T15",
+        "lat": 37.54,
+        "lng": -122.35,
+        "priority": 2,
+        "type": "d",
+        "name": "Opportunistic 1"
+      },
+      {
+        "id": "T16",
+        "lat": 37.73,
+        "lng": -122.22,
+        "priority": 6,
+        "type": "a",
+        "name": "Recon Alpha"
+      },
+      {
+        "id": "T17",
+        "lat": 37.57,
+        "lng": -122.12,
+        "priority": 5,
+        "type": "b",
+        "name": "Recon Bravo"
+      },
+      {
+        "id": "T18",
+        "lat": 37.68,
+        "lng": -122.38,
+        "priority": 4,
+        "type": "a",
+        "name": "Patrol 1"
+      },
+      {
+        "id": "T19",
+        "lat": 37.77,
+        "lng": -122.1,
+        "priority": 7,
+        "type": "b",
+        "name": "Surveillance"
+      },
+      {
+        "id": "T20",
+        "lat": 37.61,
+        "lng": -122.22,
+        "priority": 9,
+        "type": "a",
+        "name": "Critical Intel"
+      }
+    ],
+    "sams": [
+      {
+        "id": "SAM1",
+        "name": "Threat Alpha",
+        "center": {
+          "lat": 37.66,
+          "lng": -122.18
+        },
+        "range_km": 3.89
+      },
+      {
+        "id": "SAM2",
+        "name": "Threat Bravo",
+        "center": {
+          "lat": 37.74,
+          "lng": -122.2
+        },
+        "range_km": 3.34
+      },
+      {
+        "id": "SAM3",
+        "name": "Threat Charlie",
+        "center": {
+          "lat": 37.56,
+          "lng": -122.2
+        },
+        "range_km": 2.78
+      },
+      {
+        "id": "SAM4",
+        "name": "Threat Delta",
+        "center": {
+          "lat": 37.7,
+          "lng": -122.15
+        },
+        "range_km": 2.22
+      }
+    ],
+    "drone_configs": {
+      "1": {
+        "start_airport": "A1_L",
+        "end_airport": "A1_L",
+        "target_access": {
+          "a": true,
+          "b": true,
+          "c": true,
+          "d": true,
+          "e": true
+        },
+        "loiter_enabled": true,
+        "loiter_times": {
+          "a": 2,
+          "b": 3,
+          "c": 2,
+          "d": 1,
+          "e": 1
+        },
+        "refuel_stops": [
+          "A3_M"
+        ],
+        "fuel_budget": 60,
+        "runway": "M",
+        "enabled": true,
+        "cruise_altitude_km": 0,
+        "climb_angle_deg": 12
+      },
+      "2": {
+        "start_airport": "A1_L",
+        "end_airport": "A2_L",
+        "target_access": {
+          "a": true,
+          "b": true,
+          "c": false,
+          "d": false,
+          "e": false
+        },
+        "loiter_enabled": false,
+        "refuel_stops": [],
+        "fuel_budget": 55,
+        "runway": "L",
+        "enabled": true,
+        "cruise_altitude_km": 0,
+        "climb_angle_deg": 12
+      },
+      "3": {
+        "start_airport": "A2_L",
+        "end_airport": "A2_L",
+        "target_access": {
+          "a": true,
+          "b": true,
+          "c": true,
+          "d": true,
+          "e": true
+        },
+        "loiter_enabled": false,
+        "refuel_stops": [],
+        "fuel_budget": 50,
+        "runway": "S",
+        "enabled": true,
+        "cruise_altitude_km": 0,
+        "climb_angle_deg": 12
+      },
+      "4": {
+        "start_airport": "A3_M",
+        "end_airport": "A1_L",
+        "target_access": {
+          "a": false,
+          "b": true,
+          "c": true,
+          "d": true,
+          "e": true
+        },
+        "loiter_enabled": true,
+        "loiter_times": {
+          "a": 0,
+          "b": 4,
+          "c": 3,
+          "d": 2,
+          "e": 2
+        },
+        "refuel_stops": [],
+        "fuel_budget": 45,
+        "runway": "M",
+        "enabled": true,
+        "cruise_altitude_km": 0,
+        "climb_angle_deg": 12
+      },
+      "5": {
+        "start_airport": "A4_S",
+        "end_airport": "A4_S",
+        "target_access": {
+          "a": true,
+          "b": false,
+          "c": false,
+          "d": true,
+          "e": true
+        },
+        "loiter_enabled": false,
+        "refuel_stops": [],
+        "fuel_budget": 40,
+        "runway": "S",
+        "enabled": true,
+        "cruise_altitude_km": 0,
+        "climb_angle_deg": 12
+      }
+    }
+  },
+  "drone_configs": {
+    "1": {
+      "start_airport": "A1_L",
+      "end_airport": "A1_L",
+      "target_access": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "d": true,
+        "e": true
+      },
+      "loiter_enabled": true,
+      "loiter_times": {
+        "a": 2,
+        "b": 3,
+        "c": 2,
+        "d": 1,
+        "e": 1
+      },
+      "refuel_stops": [
+        "A3_M"
+      ],
+      "fuel_budget": 60,
+      "runway": "M",
+      "enabled": true,
+      "cruise_altitude_km": 0,
+      "climb_angle_deg": 12
+    },
+    "2": {
+      "start_airport": "A1_L",
+      "end_airport": "A2_L",
+      "target_access": {
+        "a": true,
+        "b": true,
+        "c": false,
+        "d": false,
+        "e": false
+      },
+      "loiter_enabled": false,
+      "refuel_stops": [],
+      "fuel_budget": 55,
+      "runway": "L",
+      "enabled": true,
+      "cruise_altitude_km": 0,
+      "climb_angle_deg": 12
+    },
+    "3": {
+      "start_airport": "A2_L",
+      "end_airport": "A2_L",
+      "target_access": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "d": true,
+        "e": true
+      },
+      "loiter_enabled": false,
+      "refuel_stops": [],
+      "fuel_budget": 50,
+      "runway": "S",
+      "enabled": true,
+      "cruise_altitude_km": 0,
+      "climb_angle_deg": 12
+    },
+    "4": {
+      "start_airport": "A3_M",
+      "end_airport": "A1_L",
+      "target_access": {
+        "a": false,
+        "b": true,
+        "c": true,
+        "d": true,
+        "e": true
+      },
+      "loiter_enabled": true,
+      "loiter_times": {
+        "a": 0,
+        "b": 4,
+        "c": 3,
+        "d": 2,
+        "e": 2
+      },
+      "refuel_stops": [],
+      "fuel_budget": 45,
+      "runway": "M",
+      "enabled": true,
+      "cruise_altitude_km": 0,
+      "climb_angle_deg": 12
+    },
+    "5": {
+      "start_airport": "A4_S",
+      "end_airport": "A4_S",
+      "target_access": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "d": true,
+        "e": true
+      },
+      "loiter_enabled": false,
+      "refuel_stops": [],
+      "fuel_budget": 40,
+      "runway": "S",
+      "enabled": true,
+      "cruise_altitude_km": 0,
+      "climb_angle_deg": 12
+    }
+  }
+}

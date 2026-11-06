@@ -1,0 +1,76 @@
+{
+  "validation": "offline actual backend and checkpoint flow",
+  "recordedNoaaRetrievedAt": "2026-10-12T01:23:37.278978+00:00",
+  "expiryCheckedAt": "2026-10-12T02:55:00Z",
+  "speedPatterns": [
+    [
+      1
+    ],
+    [
+      4
+    ],
+    [
+      16
+    ],
+    [
+      64
+    ],
+    [
+      128
+    ],
+    [
+      1280
+    ],
+    [
+      1,
+      1280,
+      4
+    ]
+  ],
+  "eachCase": {
+    "cut": "C1-1",
+    "cutCount": 1,
+    "freshSolveCount": 1,
+    "visitedTargets": [
+      "T8"
+    ],
+    "revisedRoute": [
+      "C1-1",
+      "T1",
+      "T2",
+      "T5",
+      "T7",
+      "T3",
+      "T4",
+      "T6",
+      "A3"
+    ],
+    "fuelPreserved": true,
+    "requiresWeatherReview": true,
+    "stillPaused": true
+  },
+  "pythonTests": {
+    "passed": 488,
+    "skipped": 3
+  },
+  "qualityChecks": "passed",
+  "browserVisualVerification": "blocked by browser tool permission mismatch",
+  "animationTiming": {
+    "command": "node tests/e2e/test_animation_timing.js",
+    "passed": 84,
+    "failed": 0,
+    "scope": "Actual start and resume callbacks under controlled frame timestamps, not browser FPS",
+    "cases": [
+      "1x through 1280x, including 10x boost toggles",
+      "60 fps, 250 ms, 1 s and long callback gaps",
+      "mid-frame speed changes",
+      "launch delay and multi-drone completion",
+      "airport holds and multiple refuels",
+      "weather boundary freeze",
+      "pause/resume and replay presentation hold"
+    ]
+  },
+  "checkpointTimingRecheck": "All seven recorded-mission scenarios passed, including 1280x and changing multipliers.",
+  "userBrowserVerification": "Kamal confirmed the mission solves and animates to the end after explicit checkpoint Accept and Animate; 10x boost makes testing practical.",
+  "knownRemainingIssue": "Reset and repeated import leave stale mission/weather state. Refresh, import original environment, get weather, solve, Accept, Animate for each fresh run."
+}

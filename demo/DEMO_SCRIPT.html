@@ -1,0 +1,281 @@
+<title>ISR Planner — Demo Script</title>
+<style>
+  :root {
+    /* neutrals biased slightly toward the AF-blue accent */
+    --bg:        #f4f6f9;
+    --surface:   #ffffff;
+    --ink:       #16202e;
+    --ink-soft:  #47566a;
+    --line:      #d9e0ea;
+    --accent:    #1f5fa8;   /* Air Force blue */
+    --accent-ink:#0f2a4a;
+    --say-bg:    #fbf5e8;   /* amber callout ground */
+    --say-line:  #d9a441;
+    --say-ink:   #6a4c12;
+    --warn:      #a3382f;
+    --warn-bg:   #f7ece9;
+    --ok:        #1d6b4f;
+    --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    --sans: "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+    --serif: "Iowan Old Style", "Palatino Linotype", "Georgia", serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#0e141c; --surface:#161f2b; --ink:#e7edf5; --ink-soft:#9fb0c4;
+      --line:#283444; --accent:#5b9be0; --accent-ink:#bcd8f6;
+      --say-bg:#241f14; --say-line:#a67c2e; --say-ink:#e8cf9a;
+      --warn:#e6786c; --warn-bg:#2a1815; --ok:#4fae86;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#0e141c; --surface:#161f2b; --ink:#e7edf5; --ink-soft:#9fb0c4;
+    --line:#283444; --accent:#5b9be0; --accent-ink:#bcd8f6;
+    --say-bg:#241f14; --say-line:#a67c2e; --say-ink:#e8cf9a;
+    --warn:#e6786c; --warn-bg:#2a1815; --ok:#4fae86;
+  }
+  :root[data-theme="light"] {
+    --bg:#f4f6f9; --surface:#ffffff; --ink:#16202e; --ink-soft:#47566a;
+    --line:#d9e0ea; --accent:#1f5fa8; --accent-ink:#0f2a4a;
+    --say-bg:#fbf5e8; --say-line:#d9a441; --say-ink:#6a4c12;
+    --warn:#a3382f; --warn-bg:#f7ece9; --ok:#1d6b4f;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap { max-width:52rem; margin:0 auto; padding:3rem 1.5rem 5rem; }
+
+  header { border-bottom:2px solid var(--accent); padding-bottom:1.25rem; margin-bottom:.5rem; }
+  .kicker {
+    font-size:.72rem; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--accent); font-weight:700;
+  }
+  h1 { font-family:var(--serif); font-weight:600; font-size:2.1rem; line-height:1.1;
+       margin:.4rem 0 .5rem; text-wrap:balance; letter-spacing:-.01em; }
+  .meta { display:flex; flex-wrap:wrap; gap:.5rem 1.25rem; font-size:.85rem; color:var(--ink-soft); }
+  .meta b { color:var(--ink); font-weight:600; }
+
+  /* one-line thesis */
+  .thesis {
+    background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--accent);
+    border-radius:6px; padding:1rem 1.25rem; margin:1.75rem 0 2.25rem;
+    font-family:var(--serif); font-size:1.12rem; color:var(--ink);
+  }
+  .thesis .lead { color:var(--accent-ink); font-weight:600; }
+
+  section.beat { margin:0 0 1.6rem; background:var(--surface);
+    border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+  .beat-head {
+    display:flex; align-items:baseline; gap:.85rem; flex-wrap:wrap;
+    padding:.9rem 1.15rem; border-bottom:1px solid var(--line);
+  }
+  .chip {
+    font-family:var(--mono); font-size:.72rem; font-weight:600;
+    color:#fff; background:var(--accent); border-radius:999px;
+    padding:.2rem .6rem; letter-spacing:.02em; white-space:nowrap;
+    font-variant-numeric:tabular-nums;
+  }
+  .beat-title { font-family:var(--serif); font-size:1.25rem; font-weight:600; margin:0; flex:1; min-width:12rem; }
+  .beat-goal { font-size:.78rem; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.08em; }
+
+  .beat-body { padding:1.1rem 1.15rem; display:flex; flex-direction:column; gap:.9rem; }
+
+  .do {
+    display:grid; grid-template-columns:auto 1fr; gap:.55rem .8rem; align-items:start;
+    font-size:.92rem;
+  }
+  .do .tag {
+    font-family:var(--mono); font-size:.68rem; font-weight:700; letter-spacing:.06em;
+    text-transform:uppercase; color:var(--accent); padding-top:.12rem; white-space:nowrap;
+  }
+  .do code {
+    font-family:var(--mono); font-size:.85rem; background:var(--bg);
+    border:1px solid var(--line); border-radius:5px; padding:.12rem .4rem; color:var(--ink);
+  }
+
+  .say {
+    background:var(--say-bg); border:1px solid var(--say-line);
+    border-radius:6px; padding:.75rem .95rem;
+  }
+  .say .say-label {
+    font-family:var(--mono); font-size:.66rem; font-weight:700; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--say-ink); display:block; margin-bottom:.3rem;
+  }
+  .say p { margin:0; font-family:var(--serif); font-size:1.05rem; line-height:1.5; color:var(--ink); }
+  .say p + p { margin-top:.5rem; }
+
+  .warn {
+    display:flex; gap:.6rem; align-items:flex-start;
+    background:var(--warn-bg); border:1px solid var(--warn); border-radius:6px;
+    padding:.7rem .9rem; font-size:.9rem;
+  }
+  .warn b { color:var(--warn); }
+
+  .close {
+    margin-top:2rem; border-top:2px solid var(--accent); padding-top:1.4rem;
+  }
+  .close h2 { font-family:var(--serif); font-size:1.35rem; margin:0 0 .6rem; }
+
+  .checklist { margin-top:2.5rem; background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:1.1rem 1.25rem; }
+  .checklist h3 { font-family:var(--sans); font-size:.8rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 .7rem; }
+  .checklist ul { margin:0; padding-left:1.1rem; display:flex; flex-direction:column; gap:.35rem; font-size:.9rem; }
+  .checklist li::marker { color:var(--accent); }
+
+  .time-total { font-variant-numeric:tabular-nums; }
+  em.key { color:var(--accent-ink); font-style:normal; font-weight:600; }
+  @media print {
+    body { background:#fff; }
+    section.beat, .thesis, .checklist { break-inside:avoid; }
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="kicker">Live Demo · Speaker Script</div>
+    <h1>ISR Mission Planner</h1>
+    <div class="meta">
+      <span><b>Audience</b> USAF TPOC + Kraken team</span>
+      <span><b>Runtime</b> <span class="time-total">~10 min</span></span>
+      <span><b>Env</b> <code style="font-family:var(--mono);font-size:.8rem">isr_env_DEMO_compact.json</code></span>
+    </div>
+  </header>
+
+  <div class="warn">
+    <b>Before each fresh import</b>
+    <span>Hard-refresh with <b>Cmd+Shift+R</b> (Mac) or <b>Ctrl+Shift+R</b> (Windows/Linux), then load the mission JSON. Use this sequence on both the local server and Railway, including when switching demos. It reloads the latest scripts and starts a fresh page so the import initializes without carrying over the previous run's in-memory state.</span>
+  </div>
+
+  <div class="thesis">
+    <span class="lead">Same problem Kraken solves — optimal ISR mission planning.</span>
+    Our edge: the operator states intent in plain English, the planner returns
+    <em class="key">provably optimal</em> routes under real threats and fuel limits,
+    and it <em class="key">replans live</em> when the mission changes.
+  </div>
+
+  <!-- FRAME -->
+  <section class="beat">
+    <div class="beat-head">
+      <span class="chip">0:00 · 0:30</span>
+      <h2 class="beat-title">Open — the positioning</h2>
+      <span class="beat-goal">Set the frame</span>
+    </div>
+    <div class="beat-body">
+      <div class="say">
+        <span class="say-label">Say</span>
+        <p>"Kraken and we are solving the same mission — how do you route ISR assets optimally.
+        I want to show you three things that set ours apart: you <em class="key">talk</em> to it,
+        it gives you routes that are <em class="key">provably</em> good — not a heuristic guess —
+        and when the mission changes mid-flight, it <em class="key">replans on the spot</em>."</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BEAT 1 -->
+  <section class="beat">
+    <div class="beat-head">
+      <span class="chip">0:30 · 3:00</span>
+      <h2 class="beat-title">Natural-language tasking</h2>
+      <span class="beat-goal">The differentiator</span>
+    </div>
+    <div class="beat-body">
+      <div class="do">
+        <span class="tag">Do</span><span>Hard-refresh, then load <code>isr_env_DEMO_compact.json</code>. Point out the airport, the tanker, the six targets, and the SAM threat ring.</span>
+        <span class="tag">Type</span><span><code>Solve the mission.</code> → an optimal route appears, bending around the SAM.</span>
+        <span class="tag">Type</span><span><code>Start by visiting T2, then T5, before completing the mission.</code> → the route re-plans and honors the order.</span>
+      </div>
+      <div class="say">
+        <span class="say-label">Say</span>
+        <p>"No forms, no parameters, no dropdowns. The operator states <em class="key">intent</em> — in the words they'd use over the radio — and the agent translates it into a plan."</p>
+        <p>"Notice it routed <em class="key">around</em> the SAM automatically, and when I asked for a visit order, it honored it exactly while still optimizing everything else."</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BEAT 2 -->
+  <section class="beat">
+    <div class="beat-head">
+      <span class="chip">3:30 · 6:00</span>
+      <h2 class="beat-title">Provable optimality + auto-refuel</h2>
+      <span class="beat-goal">The proof</span>
+    </div>
+    <div class="beat-body">
+      <div class="do">
+        <span class="tag">Do</span><span>Drop drone D1's fuel budget to ~35 so one tank can't cover the mission.</span>
+        <span class="tag">Type</span><span><code>Visit all the targets.</code> → the drone refuels at the tanker <em class="key">en route</em>, then continues — it does not fly home to refuel.</span>
+      </div>
+      <div class="say">
+        <span class="say-label">Say</span>
+        <p>"It decided on its own <em class="key">whether, when, and where</em> to refuel — it took the tanker that was already on the way, not a wasteful trip back to base."</p>
+        <p>"And this isn't a heuristic that stops at 'good enough.' We verify it against an exhaustive optimal search. On our benchmark, the naïve plan was 303 kilometers; this one is 233 — the same coverage, a third less distance."</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BEAT 3 -->
+  <section class="beat">
+    <div class="beat-head">
+      <span class="chip">6:00 · 7:30</span>
+      <h2 class="beat-title">Honors the command — or tells you why not</h2>
+      <span class="beat-goal">Operator trust</span>
+    </div>
+    <div class="beat-body">
+      <div class="do">
+        <span class="tag">Do</span><span>With fuel still tight, give a constraint it can't satisfy.</span>
+        <span class="tag">Type</span><span><code>Visit T5 first.</code> (a target it can't reach first within one tank) → the agent <em class="key">reports</em> it can't, and asks whether to allow a refuel or drop the constraint.</span>
+      </div>
+      <div class="say">
+        <span class="say-label">Say</span>
+        <p>"This is the part operators care about most. It <em class="key">never fakes success</em>. It either satisfies the command exactly, or it tells you plainly why it can't — and asks how you want to proceed. That's what earns trust in the field."</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BEAT 4 -->
+  <section class="beat">
+    <div class="beat-head">
+      <span class="chip">7:30 · 9:00</span>
+      <h2 class="beat-title">Mid-mission replan</h2>
+      <span class="beat-goal">Resilience</span>
+    </div>
+    <div class="beat-body">
+      <div class="do">
+        <span class="tag">Do</span><span>Hard-refresh, then import the pre-built segmented mission. Hit <code>Animate</code> — the drones fly, reach a checkpoint, replan from their current positions, and continue.</span>
+      </div>
+      <div class="say">
+        <span class="say-label">Say</span>
+        <p>"Missions don't stay static. A drone drops out, a new threat pops up, a target moves. You cut the mission at the aircraft's <em class="key">current position</em>, re-solve from there, and keep flying — this is not a plan-once tool."</p>
+      </div>
+      <div class="warn">
+        <b>Note</b>
+        <span>On the local server and Railway, use <b>Cmd+Shift+R</b> (Mac) or <b>Ctrl+Shift+R</b> (Windows/Linux) before importing this new scenario. Segment replay is verified working on the deployed URL.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSE -->
+  <div class="close">
+    <h2>Close — the roadmap hook <span style="font-family:var(--mono);font-size:.75rem;color:var(--ink-soft);font-weight:400">9:00 · 10:00</span></h2>
+    <div class="say">
+      <span class="say-label">Say</span>
+      <p>"And it <em class="key">learns</em>. Every mission — the intent, the plan we produced, and whether the operator accepted it or corrected it — is captured. Over hundreds of missions it recognizes recurring situations and reuses what worked."</p>
+      <p>"So the planner doesn't just optimize a single sortie — it gets <em class="key">smarter with every mission it flies</em>. Happy to dig into any of these."</p>
+    </div>
+  </div>
+
+  <!-- PRE-FLIGHT -->
+  <div class="checklist">
+    <h3>Pre-flight checklist</h3>
+    <ul>
+      <li>Server running / Railway available.</li>
+      <li>Hard-refresh before each fresh mission import, locally or on Railway: <b>Cmd+Shift+R</b> (Mac) / <b>Ctrl+Shift+R</b> (Windows/Linux), then load the JSON.</li>
+      <li><code>isr_env_DEMO_compact.json</code> loads + solves cleanly (dry-run once).</li>
+      <li>Segmented mission file on hand for Beat 4.</li>
+      <li>Know the two fuel numbers: <b>80</b> (Beat 1, no refuel) → <b>~35</b> (Beats 2–3, forces refuel).</li>
+      <li>Have the one stat ready: <b>303 → 233 km</b>, same coverage.</li>
+      <li>Fallback if the agent stalls: re-send the command once, or switch to the local server.</li>
+    </ul>
+  </div>
+</div>

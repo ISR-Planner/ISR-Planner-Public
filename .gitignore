@@ -1,0 +1,80 @@
+# Python
+.venv
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.eggs/
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+.env.local
+*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+agent_memory.json
+*.log
+*.tmp
+tmp_*.json
+
+# Test artifacts
+test_output.log
+test_env_*.json
+*_analysis.html
+*_analysis.md
+# Retained documentation, not generated analysis output
+!/docs/session-notes/README_ANALYSIS.md
+
+# Backups
+*_backup_*/
+
+# Benchmark harness output (specs/004-agent-benchmark-harness)
+/benchmarks/
+
+# GNN generated training data (regenerate via scripts/generate_gnn_dataset.py)
+/data/
+
+# Trained GNN checkpoints (regenerate via scripts/train_gnn.py)
+/models/*.pt
+
+# Runtime artefacts (solver outputs, test data)
+ai_solution.json
+mission_solution.json
+environment.json
+_test_output.txt
+*.solution.json
+scripts/comparison_result_*.json
+
+# Python cache
+.pytest_cache/
+
+# Local assistant/worktree artifacts
+.claude/worktrees/
+
+# Local documentation archive artifacts
+docs.zip
+
+# Stray nohup logs
+nohup.out
+nohup.out.bak
+
+# General UI infrastructure test dependencies and artifacts
+/node_modules/
+/test-results/
+/playwright-report/

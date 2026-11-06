@@ -1,0 +1,85 @@
+{
+  "request": "Plan a mission to maximize priority points. Visit as many targets as possible.",
+  "env_summary": {
+    "airports": 2,
+    "targets": 5,
+    "sams": 1,
+    "drones_enabled": 2
+  },
+  "reasoning": {
+    "agent_type": "reasoning",
+    "latency_s": 36.66,
+    "llm_calls": 7,
+    "iterations": 7,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "total_points": 0,
+    "total_fuel_km": 0.0,
+    "total_budget_km": 100.0,
+    "fuel_efficiency": 0.0,
+    "targets_visited": 0,
+    "targets_total": 5,
+    "target_coverage": 0.0,
+    "valid_solution": true,
+    "drone_metrics": {
+      "1": {
+        "route": [
+          "A1",
+          "A1"
+        ],
+        "distance_km": 0.0,
+        "points": 0,
+        "budget_km": 50.0,
+        "fuel_pct": 0.0,
+        "targets_visited": []
+      },
+      "2": {
+        "route": [
+          "A2",
+          "A2"
+        ],
+        "distance_km": 0.0,
+        "points": 0,
+        "budget_km": 50.0,
+        "fuel_pct": 0.0,
+        "targets_visited": []
+      }
+    },
+    "allocations": null,
+    "allocation_strategy": null,
+    "response_text": "That confirms it \u2014 **T1 is unreachable** (likely completely blocked by the SAM zone). No drone can get to it. So the maximum achievable is **26 points from 4 targets (T2, T3, T4, T5)**.\n\nNow let me select the best solution:\n\n---\n\n## \u2705 Recommended Mission Plan\n\n**Strategy: Exclusive** \u2014 the most fuel-efficient solution that maximizes points.\n\n| Metric | Value |\n|--------|-------|\n| **Total Points** | **26 / 34** (max achievable) |\n| **Targets Visited** | **4 / 5** |\n| **Total Fuel Used** | **13.4** (lowest of all strategies) |\n\n### Drone Routes\n\n| Drone | Route | Points | Fuel | Status |\n|-------|-------|--------|------|--------|\n| **D1** | A1 \u2192 T5(7) \u2192 T3(9) \u2192 T2(6) \u2192 T4(4) \u2192 A2 | 26 | 13.4 / 999.0 | \u2705 Feasible |\n| **D2** | A2 \u2192 A2 (standby) | 0 | 0.0 | \u2705 |\n\n### Key Findings\n\n1. **\ud83c\udfaf T1 (8 pts) is unreachable** \u2014 completely blocked by the SAM zone. No path exists from any airport to T1. This is the only target we cannot collect.\n2. **D1 handles all 4 reachable targets** in a single efficient sweep, using only 13.4 fuel out of its 200 budget.\n3. **D2 remains on standby** \u2014 not needed since D1 can cover everything with fuel to spare.\n4. This solution uses **38% less fuel** than the balanced strategy while collecting the same 26 points.\n\n### Points Breakdown\n- T3: 9 pts \u2b50 (highest)\n- T1: 8 pts \u274c (SAM-blocked)\n- T5: 7 pts \u2705\n- T2: 6 pts \u2705\n- T4: 4 pts \u2705",
+    "error": null
+  },
+  "langgraph_v4": {
+    "agent_type": "langgraph_v4",
+    "latency_s": 16.23,
+    "llm_calls": 0,
+    "iterations": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "total_points": 0,
+    "total_fuel_km": 0.0,
+    "total_budget_km": 0.0,
+    "fuel_efficiency": 0.0,
+    "targets_visited": 0,
+    "targets_total": 0,
+    "target_coverage": 0.0,
+    "valid_solution": false,
+    "drone_metrics": {},
+    "routes": null,
+    "trajectories": null,
+    "allocations": null,
+    "allocation_strategy": "unknown",
+    "response_text": "Error processing request: 'x'",
+    "error": null
+  },
+  "winner": {
+    "latency": "langgraph_v4",
+    "total_points": "tie",
+    "fuel_efficiency": "tie",
+    "target_coverage": "tie",
+    "llm_calls": "langgraph_v4"
+  }
+}

@@ -1,0 +1,39 @@
+[
+  {
+    "output": "index.html",
+    "title": "ISR Web Editor + Planner",
+    "header": "ISR Mission Editor & Planner (Web)",
+    "scripts": [],
+    "capabilities": {
+      "weatherPreview": false,
+      "weatherDiagnostics": false
+    }
+  },
+  {
+    "output": "weather_preview.html",
+    "title": "ISR Web Editor + Planner",
+    "header": "ISR Planner · Weather Preview",
+    "scripts": [
+      "/static/weather_checkpoints.js?v=20261012-weather-detours",
+      "/static/weather_preview.js?v=20261021-lifecycle"
+    ],
+    "capabilities": {
+      "weatherPreview": true,
+      "weatherDiagnostics": false
+    }
+  },
+  {
+    "output": "_weather_diagnostics/index.html",
+    "title": "ISR Weather Speed Diagnostic",
+    "header": "ISR Planner · Weather Preview",
+    "scripts": [
+      "/static/weather_checkpoints.js?v=20261012-weather-detours",
+      "/static/weather_preview.js?v=20261021-lifecycle",
+      "/static/_weather_diagnostics/runner.js?v=20261021-init"
+    ],
+    "capabilities": {
+      "weatherPreview": true,
+      "weatherDiagnostics": true
+    }
+  }
+]

@@ -1,0 +1,476 @@
+{
+  "schema": "isr_env_v1",
+  "is_segmented": false,
+  "segment_count": 1,
+  "env": {
+    "airports": [
+      {
+        "id": "A1",
+        "lat": 32.019629395810995,
+        "lng": -89.91480231285095,
+        "runway": "L"
+      },
+      {
+        "id": "TK1",
+        "lat": 32.31606119761293,
+        "lng": -89.99857306480408,
+        "type": "tanker",
+        "runway": null
+      }
+    ],
+    "targets": [
+      {
+        "id": "T1",
+        "lat": 32.26846472796351,
+        "lng": -90.15100836753845,
+        "priority": 5,
+        "type": "a"
+      },
+      {
+        "id": "T2",
+        "lat": 32.479555687503854,
+        "lng": -90.0329053401947,
+        "priority": 5,
+        "type": "a"
+      },
+      {
+        "id": "T3",
+        "lat": 31.96022741900975,
+        "lng": -89.75687384605408,
+        "priority": 5,
+        "type": "a"
+      },
+      {
+        "id": "T4",
+        "lat": 31.922935957241265,
+        "lng": -90.0438916683197,
+        "priority": 5,
+        "type": "a"
+      },
+      {
+        "id": "T5",
+        "lat": 32.371752128147584,
+        "lng": -89.8296582698822,
+        "priority": 5,
+        "type": "a"
+      },
+      {
+        "id": "T6",
+        "lat": 32.1790087467135,
+        "lng": -89.59690690040588,
+        "priority": 5,
+        "type": "a"
+      },
+      {
+        "id": "T7",
+        "lat": 32.032436542394755,
+        "lng": -90.3903579711914,
+        "priority": 2,
+        "type": "a"
+      },
+      {
+        "id": "T8",
+        "lat": 32.11389459081554,
+        "lng": -90.20421266555786,
+        "priority": 5,
+        "type": "a"
+      },
+      {
+        "id": "T9",
+        "lat": 32.386829188084945,
+        "lng": -90.26463747024536,
+        "priority": 5,
+        "type": "a"
+      },
+      {
+        "id": "T10",
+        "lat": 32.213872193750454,
+        "lng": -89.78947877883911,
+        "priority": 5,
+        "type": "a"
+      }
+    ],
+    "sams": [
+      {
+        "center": {
+          "lat": 32.1557590297129,
+          "lng": -90.0164258480072
+        },
+        "range_km": 10
+      }
+    ],
+    "drone_configs": {
+      "1": {
+        "enabled": true,
+        "fuel_budget": 170,
+        "start_airport": "A1",
+        "end_airport": "-",
+        "refuel_airport": "",
+        "refuel_stops": [
+          "TK1",
+          "TK1",
+          "TK1",
+          "A1"
+        ],
+        "refuel_options": [
+          "TK1",
+          "A1"
+        ],
+        "max_refuels": 4,
+        "runway": "S",
+        "target_access": {
+          "a": true,
+          "b": true,
+          "c": true,
+          "d": true,
+          "e": true
+        },
+        "speed": 1,
+        "loiter_enabled": true,
+        "loiter_times": {
+          "a": 2,
+          "b": 0,
+          "c": 0,
+          "d": 0,
+          "e": 0
+        },
+        "detection_radius": {
+          "a": 0,
+          "b": 0,
+          "c": 0,
+          "d": 0,
+          "e": 0
+        }
+      },
+      "2": {
+        "enabled": false,
+        "fuel_budget": 150,
+        "start_airport": "A1",
+        "end_airport": "A1",
+        "refuel_airport": "",
+        "refuel_stops": [],
+        "refuel_options": [],
+        "max_refuels": 4,
+        "runway": "S",
+        "target_access": {
+          "a": true,
+          "b": true,
+          "c": true,
+          "d": true,
+          "e": true
+        },
+        "speed": 1,
+        "loiter_enabled": false,
+        "loiter_times": {
+          "a": 0,
+          "b": 0,
+          "c": 0,
+          "d": 0,
+          "e": 0
+        },
+        "detection_radius": {
+          "a": 0,
+          "b": 0,
+          "c": 0,
+          "d": 0,
+          "e": 0
+        }
+      },
+      "3": {
+        "enabled": false,
+        "fuel_budget": 150,
+        "start_airport": "A1",
+        "end_airport": "A1",
+        "refuel_airport": "",
+        "refuel_stops": [],
+        "refuel_options": [],
+        "max_refuels": 4,
+        "runway": "S",
+        "target_access": {
+          "a": true,
+          "b": true,
+          "c": true,
+          "d": true,
+          "e": true
+        },
+        "speed": 1,
+        "loiter_enabled": false,
+        "loiter_times": {
+          "a": 0,
+          "b": 0,
+          "c": 0,
+          "d": 0,
+          "e": 0
+        },
+        "detection_radius": {
+          "a": 0,
+          "b": 0,
+          "c": 0,
+          "d": 0,
+          "e": 0
+        }
+      },
+      "4": {
+        "enabled": false,
+        "fuel_budget": 150,
+        "start_airport": "A1",
+        "end_airport": "A1",
+        "refuel_airport": "",
+        "refuel_stops": [],
+        "refuel_options": [],
+        "max_refuels": 4,
+        "runway": "S",
+        "target_access": {
+          "a": true,
+          "b": true,
+          "c": true,
+          "d": true,
+          "e": true
+        },
+        "speed": 1,
+        "loiter_enabled": false,
+        "loiter_times": {
+          "a": 0,
+          "b": 0,
+          "c": 0,
+          "d": 0,
+          "e": 0
+        },
+        "detection_radius": {
+          "a": 0,
+          "b": 0,
+          "c": 0,
+          "d": 0,
+          "e": 0
+        }
+      },
+      "5": {
+        "enabled": false,
+        "fuel_budget": 150,
+        "start_airport": "A1",
+        "end_airport": "A1",
+        "refuel_airport": "",
+        "refuel_stops": [],
+        "refuel_options": [],
+        "max_refuels": 4,
+        "runway": "S",
+        "target_access": {
+          "a": true,
+          "b": true,
+          "c": true,
+          "d": true,
+          "e": true
+        },
+        "speed": 1,
+        "loiter_enabled": false,
+        "loiter_times": {
+          "a": 0,
+          "b": 0,
+          "c": 0,
+          "d": 0,
+          "e": 0
+        },
+        "detection_radius": {
+          "a": 0,
+          "b": 0,
+          "c": 0,
+          "d": 0,
+          "e": 0
+        }
+      }
+    }
+  },
+  "drone_configs": {
+    "1": {
+      "enabled": true,
+      "fuel_budget": 170,
+      "start_airport": "A1",
+      "end_airport": "-",
+      "refuel_airport": "",
+      "refuel_stops": [
+        "TK1",
+        "TK1",
+        "TK1",
+        "A1"
+      ],
+      "refuel_options": [
+        "TK1",
+        "A1"
+      ],
+      "max_refuels": 4,
+      "runway": "S",
+      "target_access": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "d": true,
+        "e": true
+      },
+      "speed": 1,
+      "loiter_enabled": true,
+      "loiter_times": {
+        "a": 2,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0
+      },
+      "detection_radius": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0
+      }
+    },
+    "2": {
+      "enabled": false,
+      "fuel_budget": 150,
+      "start_airport": "A1",
+      "end_airport": "A1",
+      "refuel_airport": "",
+      "refuel_stops": [],
+      "refuel_options": [],
+      "max_refuels": 4,
+      "runway": "S",
+      "target_access": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "d": true,
+        "e": true
+      },
+      "speed": 1,
+      "loiter_enabled": false,
+      "loiter_times": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0
+      },
+      "detection_radius": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0
+      }
+    },
+    "3": {
+      "enabled": false,
+      "fuel_budget": 150,
+      "start_airport": "A1",
+      "end_airport": "A1",
+      "refuel_airport": "",
+      "refuel_stops": [],
+      "refuel_options": [],
+      "max_refuels": 4,
+      "runway": "S",
+      "target_access": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "d": true,
+        "e": true
+      },
+      "speed": 1,
+      "loiter_enabled": false,
+      "loiter_times": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0
+      },
+      "detection_radius": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0
+      }
+    },
+    "4": {
+      "enabled": false,
+      "fuel_budget": 150,
+      "start_airport": "A1",
+      "end_airport": "A1",
+      "refuel_airport": "",
+      "refuel_stops": [],
+      "refuel_options": [],
+      "max_refuels": 4,
+      "runway": "S",
+      "target_access": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "d": true,
+        "e": true
+      },
+      "speed": 1,
+      "loiter_enabled": false,
+      "loiter_times": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0
+      },
+      "detection_radius": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0
+      }
+    },
+    "5": {
+      "enabled": false,
+      "fuel_budget": 150,
+      "start_airport": "A1",
+      "end_airport": "A1",
+      "refuel_airport": "",
+      "refuel_stops": [],
+      "refuel_options": [],
+      "max_refuels": 4,
+      "runway": "S",
+      "target_access": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "d": true,
+        "e": true
+      },
+      "speed": 1,
+      "loiter_enabled": false,
+      "loiter_times": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0
+      },
+      "detection_radius": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0
+      }
+    }
+  },
+  "map_view": {
+    "bounds": {
+      "south": 32.19907094549943,
+      "north": 32.349070945499435,
+      "west": -90.12752838134766,
+      "east": -89.97752838134765
+    },
+    "center": {
+      "lat": 32.19579335760881,
+      "lng": -90.06763458251953
+    },
+    "zoom": 10
+  }
+}

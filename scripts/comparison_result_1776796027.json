@@ -1,0 +1,85 @@
+{
+  "request": "Plan a mission to maximize priority points. Visit as many targets as possible.",
+  "env_summary": {
+    "airports": 2,
+    "targets": 5,
+    "sams": 1,
+    "drones_enabled": 2
+  },
+  "reasoning": {
+    "agent_type": "reasoning",
+    "latency_s": 31.58,
+    "llm_calls": 6,
+    "iterations": 6,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "total_points": 0,
+    "total_fuel_km": 0.0,
+    "total_budget_km": 100.0,
+    "fuel_efficiency": 0.0,
+    "targets_visited": 0,
+    "targets_total": 5,
+    "target_coverage": 0.0,
+    "valid_solution": true,
+    "drone_metrics": {
+      "1": {
+        "route": [
+          "A1",
+          "A1"
+        ],
+        "distance_km": 0.0,
+        "points": 0,
+        "budget_km": 50.0,
+        "fuel_pct": 0.0,
+        "targets_visited": []
+      },
+      "2": {
+        "route": [
+          "A2",
+          "A2"
+        ],
+        "distance_km": 0.0,
+        "points": 0,
+        "budget_km": 50.0,
+        "fuel_pct": 0.0,
+        "targets_visited": []
+      }
+    },
+    "allocations": null,
+    "allocation_strategy": null,
+    "response_text": "## \u2705 Optimal Mission Plan\n\n### Best Strategy: **Exclusive** \u2014 26 points, 13.4 fuel\n\n| Drone | Route | Points | Fuel Used |\n|-------|-------|--------|-----------|\n| **D1** | A1 \u2192 T5 \u2192 T3 \u2192 T2 \u2192 T4 \u2192 A2 | 26 | 13.4 / 999.0 |\n| **D2** | Idle (not needed) | 0 | 0.0 |\n\n### Summary\n| Metric | Value |\n|--------|-------|\n| **Total Points** | **26 / 34** (76%) |\n| **Targets Visited** | **4 / 5** (T2, T3, T4, T5) |\n| **Total Fuel** | **13.4** (most efficient) |\n| **Missed Target** | **T1 (8 pts)** \u2014 blocked by SAM zone, unreachable |\n\n### Key Findings:\n1. **T1 is unreachable** \u2014 completely blocked by the SAM zone. No drone can reach it from any airport.\n2. **All 4 reachable targets are covered** \u2014 we're collecting every available point.\n3. **The Exclusive strategy wins** \u2014 D1 handles all 4 targets in a single efficient route using only 13.4 fuel (vs 15.2\u201321.6 for other strategies), leaving D2 as a reserve.\n4. D1 ends at A2 (flexible end airport) which saves fuel on the return leg.",
+    "error": null
+  },
+  "langgraph_v4": {
+    "agent_type": "langgraph_v4",
+    "latency_s": 16.49,
+    "llm_calls": 0,
+    "iterations": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "total_points": 0,
+    "total_fuel_km": 0.0,
+    "total_budget_km": 0.0,
+    "fuel_efficiency": 0.0,
+    "targets_visited": 0,
+    "targets_total": 0,
+    "target_coverage": 0.0,
+    "valid_solution": false,
+    "drone_metrics": {},
+    "routes": null,
+    "trajectories": null,
+    "allocations": null,
+    "allocation_strategy": "unknown",
+    "response_text": "Error processing request: 'x'",
+    "error": null
+  },
+  "winner": {
+    "latency": "langgraph_v4",
+    "total_points": "tie",
+    "fuel_efficiency": "tie",
+    "target_coverage": "tie",
+    "llm_calls": "langgraph_v4"
+  }
+}

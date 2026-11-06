@@ -1,0 +1,45 @@
+[flake8]
+max-line-length = 120
+extend-ignore =
+    # E203: whitespace before ':' — conflicts with black's slice formatting
+    E203,
+    # W503: line break before binary operator — conflicts with black
+    W503,
+
+per-file-ignores =
+    # E402: module level import not at top — these files intentionally manipulate sys.path
+    # or call load_dotenv() before importing project modules, so late imports are expected.
+    # E265: block comment format — archive files have legacy header comments
+    */archive/*:E402,E265
+    tests/path_planning/test_backtrack_bug.py:E402
+    tests/path_planning/test_boundary_nav.py:E402
+    tests/path_planning/test_t19_a5.py:E402
+    server/agents/coordinator_v4.py:E402
+    server/agents/isr_agent_multi_v4.py:E402
+    server/agents/v4/route_optimizer.py:E501
+    server/database/mission_ledger.py:E402
+    server/main.py:E402
+    server/solver/nfz_trajectory_planner.py:E402
+    server/solver/orienteering_solver.py:E402
+    server/solver/optimizers/pipeline.py:E501
+    server/solver/optimizers/post_insert.py:E501
+    server/solver/optimizers/trajectory_swap.py:E501
+    server/solver/sam_navigation.py:E402
+    server/solver/solve_mission.py:E501
+    server/solver/solver_bridge.py:E402
+    server/solver/target_allocator.py:E402
+    server/solver/trajectory_planner.py:E402
+    server/solver/trajectory_planner_poly.py:E402
+    # F541: f-string without placeholders — debug test with many static print strings
+    # E501: line too long — debug test file, long error messages are intentional
+    tests/test_checkpoint_matrix.py:E402,F541,E501
+    tests/test_insert_missed_bug.py:E402
+    tests/test_multi_agent.py:E402
+    tests/test_multi_agent_v4.py:E402
+    tests/test_orchestration_tools.py:E402
+    tests/test_polygon_filter.py:E402
+    tests/test_swap_closer_fix.py:E402
+    tests/test_swap_closer_full.py:E402
+    tests/test_trajectory_planner_poly.py:E402
+    tests/test_unified_optimizer.py:E402,E501
+    tests/test_virtual_drones.py:E402

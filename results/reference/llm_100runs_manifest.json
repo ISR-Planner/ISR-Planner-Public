@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "batch": {
+    "name": "100runs-1drone-15targets",
+    "started_at": "2026-04-22T21:39:19Z",
+    "ended_at": "2026-04-23T00:06:04Z",
+    "completed": true,
+    "output_dir": "benchmarks/20260422T213919Z-100runs-1drone-15targets"
+  },
+  "config": {
+    "seed": 42,
+    "runs_requested": 100,
+    "runs_completed": 100,
+    "server_url": "http://localhost:8893",
+    "prompt": "Plan a mission to maximize priority points. Visit as many targets as possible.",
+    "generator": {
+      "airports": 1,
+      "targets": 15,
+      "sams": 1,
+      "drones": 1,
+      "bbox": {
+        "lat_min": 32.43,
+        "lat_max": 32.57,
+        "lng_min": -90.07,
+        "lng_max": -89.93
+      },
+      "box_size_km_approx": 20.4,
+      "default_drone": {
+        "fuel_budget_km": 250.0,
+        "fuel_budget_km_range": [
+          20.0,
+          40.0
+        ],
+        "speed_kmh": 120.0,
+        "enabled": true
+      }
+    },
+    "execution": {
+      "per_agent_timeout_s": 120,
+      "max_retries": 1,
+      "inter_run_delay_s": 2.0,
+      "max_regen_attempts_per_slot": 30,
+      "min_reachable_targets": 2
+    }
+  },
+  "aggregate": {
+    "reasoning": {
+      "runs_successful": 100,
+      "runs_failed": 0,
+      "success_rate": 1.0,
+      "points": {
+        "mean": 35.65,
+        "median": 37.0,
+        "min": 0.0,
+        "max": 93.0
+      },
+      "fuel_km": {
+        "mean": 27.763,
+        "median": 31.965,
+        "min": 0.0,
+        "max": 49.36
+      },
+      "fuel_efficiency": {
+        "mean": 0.924,
+        "median": 1.023,
+        "min": 0.0,
+        "max": 2.173
+      },
+      "coverage": {
+        "mean": 0.438,
+        "median": 0.4,
+        "min": 0.0,
+        "max": 0.867
+      },
+      "latency_s": {
+        "mean": 48.562,
+        "median": 46.37,
+        "min": 30.31,
+        "max": 95.22,
+        "p95": 67.132
+      },
+      "llm_calls": {
+        "mean": 9.28,
+        "median": 9.0,
+        "min": 5.0,
+        "max": 14.0
+      },
+      "valid_solution_rate": 0.34
+    },
+    "langgraph_v4": {
+      "runs_successful": 100,
+      "runs_failed": 0,
+      "success_rate": 1.0,
+      "points": {
+        "mean": 41.52,
+        "median": 42.0,
+        "min": 0.0,
+        "max": 93.0
+      },
+      "fuel_km": {
+        "mean": 32.24,
+        "median": 34.585,
+        "min": 0.0,
+        "max": 54.68
+      },
+      "fuel_efficiency": {
+        "mean": 1.071,
+        "median": 1.099,
+        "min": 0.0,
+        "max": 2.173
+      },
+      "coverage": {
+        "mean": 0.504,
+        "median": 0.533,
+        "min": 0.0,
+        "max": 0.933
+      },
+      "latency_s": {
+        "mean": 37.419,
+        "median": 37.03,
+        "min": 31.04,
+        "max": 49.57,
+        "p95": 41.791
+      },
+      "llm_calls": {
+        "mean": 0.0,
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "valid_solution_rate": 0.36
+    },
+    "head_to_head": {
+      "both_succeeded": 100,
+      "reasoning_only_success": 0,
+      "v4_only_success": 0,
+      "both_failed": 0,
+      "points": {
+        "reasoning_wins": 0,
+        "v4_wins": 13,
+        "ties": 87
+      },
+      "fuel_km": {
+        "reasoning_wins": 12,
+        "v4_wins": 2,
+        "ties": 86
+      }
+    },
+    "low_feasibility_runs": 3
+  }
+}

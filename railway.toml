@@ -1,0 +1,20 @@
+# Railway Configuration for ISR Mission Planner
+# https://docs.railway.app/reference/config-as-code
+
+[build]
+# Use Dockerfile for building
+builder = "dockerfile"
+dockerfilePath = "Dockerfile.railway"
+
+[deploy]
+# Number of instances
+numReplicas = 1
+
+# Health check (increased timeout for Python app startup)
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+# Note: Using Dockerfile CMD instead of startCommand for proper $PORT expansion
+
+# Restart policy
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5

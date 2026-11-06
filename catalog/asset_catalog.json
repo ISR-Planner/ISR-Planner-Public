@@ -1,0 +1,373 @@
+{
+  "version": 1,
+  "note": "NOMINAL values from public sources (see each platform's source; main reference: Representative_UAS_Specifications_ISR_Planner_Roadmap.docx). Edit freely: every value can also be changed per drone in the Asset tab. Units: altitudes km above sea level, angles degrees, speed km/h, endurance hours, range km, detection km, loiter minutes. Fuel = range_km when published, else cruise speed x endurance. operational_range_km (data-link radius) and max_speed_kmh are informational. Target categories (target_categories) give each target letter a meaning; sensor figures are per category. Left out: RQ-170 (speed/range not published), RQ-180 (unconfirmed estimates).",
+  "target_categories": [
+    {
+      "id": "a",
+      "name": "Personnel",
+      "examples": "troops, teams, gatherings",
+      "color": "#3b82f6"
+    },
+    {
+      "id": "b",
+      "name": "Light vehicles",
+      "examples": "trucks, pickups, convoys",
+      "color": "#22c55e"
+    },
+    {
+      "id": "c",
+      "name": "Heavy / armoured vehicles",
+      "examples": "tanks, artillery, launchers",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "d",
+      "name": "Emitters / radar sites",
+      "examples": "radars, SAM radars, jammers, AAA",
+      "color": "#ef4444"
+    },
+    {
+      "id": "e",
+      "name": "Command & control",
+      "examples": "HQs, command posts, relays",
+      "color": "#a855f7"
+    },
+    {
+      "id": "f",
+      "name": "Infrastructure",
+      "examples": "bridges, dams, power, depots",
+      "color": "#06b6d4"
+    },
+    {
+      "id": "g",
+      "name": "Maritime",
+      "examples": "ships, patrol boats",
+      "color": "#eab308"
+    }
+  ],
+  "platforms": [
+    {
+      "id": "RQ-11B",
+      "name": "RQ-11 Raven",
+      "cruise_altitude_km": 0.3,
+      "ceiling_km": 4.5,
+      "climb_angle_deg": 15,
+      "descent_angle_deg": 12,
+      "cruise_speed_kmh": 45,
+      "max_speed_kmh": 95,
+      "endurance_h": 2,
+      "operational_range_km": 10,
+      "runway": "S",
+      "sensors": [
+        "EOIR"
+      ],
+      "source": "Representative_UAS_Specifications_ISR_Planner_Roadmap [1]: max 95 km/h, 10 km operational range (data link), 2 h (source also says 60-90 min \u2014 flagged), 4,500 m ceiling, hand launch. Cruise, operating altitude (flies ~500 ft above ground) and angles assumed."
+    },
+    {
+      "id": "RQ-20",
+      "name": "RQ-20 Puma",
+      "cruise_altitude_km": 0.3,
+      "ceiling_km": 3.2,
+      "climb_angle_deg": 15,
+      "descent_angle_deg": 12,
+      "cruise_speed_kmh": 50,
+      "max_speed_kmh": 83,
+      "endurance_h": 2,
+      "operational_range_km": 15,
+      "runway": "S",
+      "sensors": [
+        "EOIR"
+      ],
+      "source": "Representative_UAS_Specifications_ISR_Planner_Roadmap [2]: max 83 km/h, 15 km operational range, 2 h, 3,200 m ceiling, hand launch (baseline variant). Cruise ~60% of max, operating altitude and angles assumed."
+    },
+    {
+      "id": "RQ-7B",
+      "name": "RQ-7 Shadow",
+      "cruise_altitude_km": 2.4,
+      "ceiling_km": 4.6,
+      "climb_angle_deg": 10,
+      "descent_angle_deg": 8,
+      "cruise_speed_kmh": 110,
+      "max_speed_kmh": 200,
+      "endurance_h": 9,
+      "operational_range_km": 109,
+      "runway": "S",
+      "sensors": [
+        "EOIR"
+      ],
+      "source": "Representative_UAS_Specifications_ISR_Planner_Roadmap [3]: max 200 km/h, 109 km operational range, 9 h, 4,600 m ceiling, catapult launch / arresting-gear recovery. Cruise, operating altitude and angles assumed."
+    },
+    {
+      "id": "RQ-21A",
+      "name": "RQ-21 Blackjack",
+      "cruise_altitude_km": 2.4,
+      "ceiling_km": 5.9,
+      "climb_angle_deg": 10,
+      "descent_angle_deg": 8,
+      "cruise_speed_kmh": 102,
+      "max_speed_kmh": 170,
+      "endurance_h": 16,
+      "operational_range_km": 93,
+      "runway": "S",
+      "sensors": [
+        "EOIR"
+      ],
+      "source": "Representative_UAS_Specifications_ISR_Planner_Roadmap [4]: max 170 km/h, 93 km operational range, 16 h, 5,900 m ceiling, rail launch / Skyhook recovery. Cruise (55 kt), operating altitude and angles assumed."
+    },
+    {
+      "id": "RQ-5",
+      "name": "RQ-5 Hunter",
+      "cruise_altitude_km": 3.0,
+      "ceiling_km": 5.5,
+      "climb_angle_deg": 8,
+      "descent_angle_deg": 6,
+      "cruise_speed_kmh": 102,
+      "max_speed_kmh": 170,
+      "endurance_h": 21,
+      "operational_range_km": 125,
+      "runway": "M",
+      "sensors": [
+        "EOIR"
+      ],
+      "source": "Representative_UAS_Specifications_ISR_Planner_Roadmap [5]: max 170 km/h, 125 km operational range, 21 h, 5,500 m ceiling, conventional runway + arresting gear. Cruise ~60% of max, operating altitude and angles assumed."
+    },
+    {
+      "id": "RQ-101",
+      "name": "RQ-101 Night Intruder",
+      "cruise_altitude_km": 3.0,
+      "ceiling_km": 4.5,
+      "climb_angle_deg": 8,
+      "descent_angle_deg": 6,
+      "cruise_speed_kmh": 150,
+      "max_speed_kmh": 185,
+      "endurance_h": 6,
+      "operational_range_km": 110,
+      "runway": "M",
+      "sensors": [
+        "EOIR"
+      ],
+      "source": "Representative_UAS_Specifications_ISR_Planner_Roadmap [6]: cruise 150 km/h, max 185, 110-200 km operating range, 6 h, 4,500 m ceiling; launch/recovery not specified (runway M assumed). Operating altitude and angles assumed."
+    },
+    {
+      "id": "MQ-1B",
+      "name": "MQ-1B Predator",
+      "cruise_altitude_km": 4.6,
+      "ceiling_km": 7.6,
+      "climb_angle_deg": 8,
+      "descent_angle_deg": 6,
+      "cruise_speed_kmh": 135,
+      "max_speed_kmh": 217,
+      "endurance_h": 24,
+      "range_km": 1239,
+      "runway": "M",
+      "sensors": [
+        "EOIR",
+        "SAR"
+      ],
+      "source": "Representative_UAS_Specifications_ISR_Planner_Roadmap [7] (USAF): cruise 84 mph, max 135 mph, range 770 mi, 25,000 ft ceiling, 5,000 ft runway. Endurance not in the USAF table (24 h commonly reported). Operating altitude and angles assumed."
+    },
+    {
+      "id": "MQ-9A",
+      "name": "MQ-9A Reaper",
+      "cruise_altitude_km": 7.6,
+      "ceiling_km": 15.2,
+      "climb_angle_deg": 8,
+      "descent_angle_deg": 6,
+      "cruise_speed_kmh": 313,
+      "max_speed_kmh": 444,
+      "endurance_h": 27,
+      "range_km": 1851,
+      "runway": "M",
+      "sensors": [
+        "EOIR",
+        "SAR",
+        "SIGINT"
+      ],
+      "source": "Representative_UAS_Specifications_ISR_Planner_Roadmap [8][9] (USAF, GA-ASI): 240 KTAS, 27+ h, up to 50,000 ft, range 1,150 mi baseline (1,611 mi ER); EO/IR (MTS-B), multimode radar, ESM option. Cruise (169 kt), operating altitude and angles assumed."
+    },
+    {
+      "id": "RQ-4B",
+      "name": "RQ-4 Global Hawk",
+      "cruise_altitude_km": 16.8,
+      "ceiling_km": 18.3,
+      "climb_angle_deg": 6,
+      "descent_angle_deg": 5,
+      "cruise_speed_kmh": 574,
+      "endurance_h": 34,
+      "range_km": 22780,
+      "runway": "L",
+      "sensors": [
+        "EOIR",
+        "SAR",
+        "SIGINT"
+      ],
+      "source": "Representative_UAS_Specifications_ISR_Planner_Roadmap [10] (USAF, Oct 2014): 310 kt, range 12,300 nmi, >34 h, 60,000 ft; EO, IR, SAR, MTI, SIGINT (block dependent). Operating altitude (55,000 ft) and angles assumed."
+    },
+    {
+      "id": "MQ-4C",
+      "name": "MQ-4C Triton",
+      "cruise_altitude_km": 15.2,
+      "ceiling_km": 16.8,
+      "climb_angle_deg": 6,
+      "descent_angle_deg": 5,
+      "cruise_speed_kmh": 575,
+      "max_speed_kmh": 610,
+      "endurance_h": 30,
+      "range_km": 15200,
+      "runway": "L",
+      "sensors": [
+        "EOIR",
+        "SAR",
+        "SIGINT"
+      ],
+      "source": "Representative_UAS_Specifications_ISR_Planner_Roadmap [13]: max 610 km/h, 15,200 km operational range, 30 h, 16,800 m ceiling; AESA maritime radar, EO/IR, AIS, passive ESM. Cruise (310 kt), operating altitude and angles assumed."
+    },
+    {
+      "id": "X-47B",
+      "name": "X-47B (demonstrator)",
+      "cruise_altitude_km": 10.0,
+      "ceiling_km": 12.8,
+      "climb_angle_deg": 8,
+      "descent_angle_deg": 6,
+      "cruise_speed_kmh": 660,
+      "max_speed_kmh": 1102,
+      "endurance_h": 6,
+      "range_km": 3900,
+      "runway": "L",
+      "sensors": [
+        "EOIR",
+        "SAR",
+        "SIGINT"
+      ],
+      "source": "Representative_UAS_Specifications_ISR_Planner_Roadmap [15]: technology demonstrator \u2014 max 1,102 km/h, 3,900 km range, 6 h, 12,800 m ceiling, carrier catapult / arrested landing; sensors are reported provisions, not a production suite. Cruise ~60% of max, operating altitude and angles assumed."
+    },
+    {
+      "id": "MQ-1C",
+      "name": "MQ-1C Gray Eagle",
+      "cruise_altitude_km": 7.0,
+      "ceiling_km": 8.8,
+      "climb_angle_deg": 8,
+      "descent_angle_deg": 6,
+      "cruise_speed_kmh": 280,
+      "endurance_h": 25,
+      "runway": "S",
+      "sensors": [
+        "EOIR",
+        "SAR",
+        "SIGINT"
+      ],
+      "source": "Public figures (29,000 ft ceiling, 25 h); cruise speed and climb/descent angles assumed. Not in the roadmap document."
+    },
+    {
+      "id": "MQ-9B",
+      "name": "MQ-9B SkyGuardian",
+      "cruise_altitude_km": 7.6,
+      "ceiling_km": 12.2,
+      "climb_angle_deg": 8,
+      "descent_angle_deg": 6,
+      "cruise_speed_kmh": 340,
+      "endurance_h": 40,
+      "runway": "M",
+      "sensors": [
+        "EOIR",
+        "SAR",
+        "SIGINT"
+      ],
+      "source": "Approximate public figures (40+ h, 40,000 ft ceiling, 210 kt max); cruise speed, operating altitude and climb/descent angles assumed. Not in the roadmap document."
+    },
+    {
+      "id": "ScanEagle",
+      "name": "ScanEagle",
+      "cruise_altitude_km": 1.5,
+      "ceiling_km": 5.9,
+      "climb_angle_deg": 10,
+      "descent_angle_deg": 8,
+      "cruise_speed_kmh": 111,
+      "endurance_h": 18,
+      "runway": "S",
+      "sensors": [
+        "EOIR"
+      ],
+      "source": "Approximate public figures (catapult launch; 60 kt, 18+ h, 19,500 ft ceiling); operating altitude and climb/descent angles assumed. Not in the roadmap document."
+    }
+  ],
+  "sensors": [
+    {
+      "id": "EOIR",
+      "name": "EO/IR turret",
+      "types": {
+        "a": {
+          "detection_km": 3,
+          "loiter_min": 10
+        },
+        "b": {
+          "detection_km": 6,
+          "loiter_min": 4
+        },
+        "c": {
+          "detection_km": 8,
+          "loiter_min": 4
+        },
+        "d": {
+          "detection_km": 6,
+          "loiter_min": 3
+        },
+        "e": {
+          "detection_km": 5,
+          "loiter_min": 8
+        },
+        "f": {
+          "detection_km": 12,
+          "loiter_min": 2
+        },
+        "g": {
+          "detection_km": 8,
+          "loiter_min": 4
+        }
+      },
+      "source": "Example values - replace. Sees every category; closest for small targets (personnel), farthest for large fixed ones (infrastructure)."
+    },
+    {
+      "id": "SAR",
+      "name": "Synthetic aperture radar (with moving-target mode)",
+      "types": {
+        "b": {
+          "detection_km": 20,
+          "loiter_min": 2
+        },
+        "c": {
+          "detection_km": 20,
+          "loiter_min": 2
+        },
+        "d": {
+          "detection_km": 20,
+          "loiter_min": 2
+        },
+        "f": {
+          "detection_km": 25,
+          "loiter_min": 2
+        },
+        "g": {
+          "detection_km": 30,
+          "loiter_min": 2
+        }
+      },
+      "source": "Example values - replace. Sees only the categories listed (not personnel or C2 activity)."
+    },
+    {
+      "id": "SIGINT",
+      "name": "Signals intelligence",
+      "types": {
+        "d": {
+          "detection_km": 40,
+          "loiter_min": 10
+        },
+        "e": {
+          "detection_km": 40,
+          "loiter_min": 10
+        }
+      },
+      "source": "Example values - replace. Finds emitters: radars and command & control radio traffic."
+    }
+  ]
+}

@@ -1,0 +1,263 @@
+{
+  "schema": "isr_env_v1",
+  "is_segmented": false,
+  "segment_count": 1,
+  "name": "Demo 4: Dynamic Mission Replanning",
+  "description": "Scenario designed for cut/edit/replan demonstration",
+  "dynamic_demo_instructions": {
+    "step1": "Solve and start animation",
+    "step2": "Let drones travel about 30-40% of their routes",
+    "step3": "Click Edit while animating",
+    "step4_option_a": "Add a new SAM at approximately (37.71, -122.15) to block a drone's path",
+    "step4_option_b": "Remove T4 or T5 (simulating target no longer relevant)",
+    "step4_option_c": "Add a new high-priority target at (37.69, -122.22)",
+    "step5": "End Edit - observe white diamond (cut point) and new solution",
+    "step6": "Continue animation to show new routes",
+    "step7": "Optionally make another cut to show multi-segment mission"
+  },
+  "env": {
+    "airports": [
+      {
+        "id": "A1_L",
+        "lat": 37.6,
+        "lng": -122.38,
+        "runway": "L",
+        "type": "airport",
+        "name": "Home Base"
+      },
+      {
+        "id": "A2_M",
+        "lat": 37.78,
+        "lng": -122.08,
+        "runway": "M",
+        "type": "airport",
+        "name": "Recovery Point"
+      },
+      {
+        "id": "A3_S",
+        "lat": 37.52,
+        "lng": -122.12,
+        "runway": "S",
+        "type": "airport",
+        "name": "Emergency Strip"
+      }
+    ],
+    "targets": [
+      {
+        "id": "T1",
+        "lat": 37.65,
+        "lng": -122.3,
+        "priority": 7,
+        "type": "a",
+        "name": "Phase 1 Target"
+      },
+      {
+        "id": "T2",
+        "lat": 37.68,
+        "lng": -122.25,
+        "priority": 8,
+        "type": "a",
+        "name": "Phase 1 Priority"
+      },
+      {
+        "id": "T3",
+        "lat": 37.7,
+        "lng": -122.18,
+        "priority": 6,
+        "type": "b",
+        "name": "Phase 2 Target"
+      },
+      {
+        "id": "T4",
+        "lat": 37.72,
+        "lng": -122.12,
+        "priority": 9,
+        "type": "a",
+        "name": "Phase 2 Priority"
+      },
+      {
+        "id": "T5",
+        "lat": 37.75,
+        "lng": -122.2,
+        "priority": 5,
+        "type": "a",
+        "name": "Phase 3 Target"
+      },
+      {
+        "id": "T6",
+        "lat": 37.58,
+        "lng": -122.22,
+        "priority": 10,
+        "type": "b",
+        "name": "Critical - South"
+      },
+      {
+        "id": "T7",
+        "lat": 37.55,
+        "lng": -122.15,
+        "priority": 4,
+        "type": "c",
+        "name": "Opportunistic"
+      },
+      {
+        "id": "T8",
+        "lat": 37.63,
+        "lng": -122.18,
+        "priority": 7,
+        "type": "a",
+        "name": "Central Objective"
+      },
+      {
+        "id": "T9",
+        "lat": 37.76,
+        "lng": -122.28,
+        "priority": 3,
+        "type": "a",
+        "name": "Northwest Scan"
+      },
+      {
+        "id": "T10",
+        "lat": 37.67,
+        "lng": -122.08,
+        "priority": 8,
+        "type": "b",
+        "name": "Eastern Intel"
+      }
+    ],
+    "sams": [
+      {
+        "id": "SAM1",
+        "name": "Known Threat",
+        "center": {
+          "lat": 37.66,
+          "lng": -122.2
+        },
+        "range_km": 2.78
+      }
+    ],
+    "drone_configs": {
+      "1": {
+        "start_airport": "A1_L",
+        "end_airport": "A1_L",
+        "target_access": {
+          "a": true,
+          "b": true,
+          "c": true,
+          "d": true,
+          "e": true
+        },
+        "loiter_enabled": false,
+        "refuel_stops": [],
+        "fuel_budget": 55,
+        "runway": "M",
+        "enabled": true,
+        "cruise_altitude_km": 0,
+        "climb_angle_deg": 12
+      },
+      "2": {
+        "start_airport": "A1_L",
+        "end_airport": "A2_M",
+        "target_access": {
+          "a": true,
+          "b": true,
+          "c": true,
+          "d": true,
+          "e": true
+        },
+        "loiter_enabled": false,
+        "refuel_stops": [],
+        "fuel_budget": 50,
+        "runway": "M",
+        "enabled": true,
+        "cruise_altitude_km": 0,
+        "climb_angle_deg": 12
+      },
+      "3": {
+        "start_airport": "A1_L",
+        "end_airport": "A1_L",
+        "target_access": {
+          "a": true,
+          "b": true,
+          "c": true,
+          "d": true,
+          "e": true
+        },
+        "loiter_enabled": false,
+        "refuel_stops": [],
+        "fuel_budget": 45,
+        "runway": "S",
+        "enabled": true,
+        "cruise_altitude_km": 0,
+        "climb_angle_deg": 12
+      },
+      "4": {
+        "enabled": false
+      },
+      "5": {
+        "enabled": false
+      }
+    }
+  },
+  "drone_configs": {
+    "1": {
+      "start_airport": "A1_L",
+      "end_airport": "A1_L",
+      "target_access": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "d": true,
+        "e": true
+      },
+      "loiter_enabled": false,
+      "refuel_stops": [],
+      "fuel_budget": 55,
+      "runway": "M",
+      "enabled": true,
+      "cruise_altitude_km": 0,
+      "climb_angle_deg": 12
+    },
+    "2": {
+      "start_airport": "A1_L",
+      "end_airport": "A2_M",
+      "target_access": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "d": true,
+        "e": true
+      },
+      "loiter_enabled": false,
+      "refuel_stops": [],
+      "fuel_budget": 50,
+      "runway": "M",
+      "enabled": true,
+      "cruise_altitude_km": 0,
+      "climb_angle_deg": 12
+    },
+    "3": {
+      "start_airport": "A1_L",
+      "end_airport": "A1_L",
+      "target_access": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "d": true,
+        "e": true
+      },
+      "loiter_enabled": false,
+      "refuel_stops": [],
+      "fuel_budget": 45,
+      "runway": "S",
+      "enabled": true,
+      "cruise_altitude_km": 0,
+      "climb_angle_deg": 12
+    },
+    "4": {
+      "enabled": false
+    },
+    "5": {
+      "enabled": false
+    }
+  }
+}

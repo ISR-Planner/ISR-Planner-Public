@@ -1,0 +1,5828 @@
+{
+  "source": "results/reference/llm_100runs_1drone_15targets_seed42.jsonl",
+  "runs": 100,
+  "aggregate": {
+    "reasoning": {
+      "runs": 100,
+      "success_rate": 1.0,
+      "latency_s_mean": 48.562,
+      "latency_s_median": 46.37,
+      "total_points_mean": 35.65,
+      "total_points_median": 37.0,
+      "total_fuel_km_mean": 27.763,
+      "target_coverage_mean": 0.438,
+      "valid_solution_rate": 0.34,
+      "total_points_mean_valid_only": 30.765
+    },
+    "langgraph_v4": {
+      "runs": 100,
+      "success_rate": 1.0,
+      "latency_s_mean": 37.419,
+      "latency_s_median": 37.03,
+      "total_points_mean": 41.52,
+      "total_points_median": 42.0,
+      "total_fuel_km_mean": 32.24,
+      "target_coverage_mean": 0.504,
+      "valid_solution_rate": 0.36,
+      "total_points_mean_valid_only": 32.444
+    },
+    "solver_control": {
+      "runs": 100,
+      "success_rate": 1.0,
+      "latency_s_mean": 0.245,
+      "latency_s_median": 0.04,
+      "total_points_mean": 34.78,
+      "total_points_median": 33.0,
+      "total_fuel_km_mean": 24.766,
+      "target_coverage_mean": 0.403,
+      "valid_solution_rate": 0.97,
+      "total_points_mean_valid_only": 35.856
+    },
+    "gnn": {
+      "runs": 100,
+      "success_rate": 1.0,
+      "latency_s_mean": 0.705,
+      "latency_s_median": 0.14,
+      "total_points_mean": 34.8,
+      "total_points_median": 33.0,
+      "total_fuel_km_mean": 24.76,
+      "target_coverage_mean": 0.404,
+      "valid_solution_rate": 0.97,
+      "total_points_mean_valid_only": 35.876
+    },
+    "gnn_decoder": {
+      "runs": 100,
+      "success_rate": 1.0,
+      "latency_s_mean": 0.141,
+      "latency_s_median": 0.102,
+      "total_points_mean": 31.49,
+      "total_points_median": 29.0,
+      "total_fuel_km_mean": 24.552,
+      "target_coverage_mean": 0.382,
+      "valid_solution_rate": 0.97,
+      "total_points_mean_valid_only": 32.464
+    }
+  },
+  "paired_points": {
+    "gnn_vs_solver_control": {
+      "compared_runs": 100,
+      "gnn_wins": 1,
+      "solver_control_wins": 0,
+      "ties": 99,
+      "mean_point_delta": 0.02
+    },
+    "gnn_decoder_vs_solver_control": {
+      "compared_runs": 100,
+      "gnn_decoder_wins": 1,
+      "solver_control_wins": 39,
+      "ties": 60,
+      "mean_point_delta": -3.29
+    },
+    "solver_control_vs_langgraph_v4": {
+      "compared_runs": 100,
+      "solver_control_wins": 0,
+      "langgraph_v4_wins": 61,
+      "ties": 39,
+      "mean_point_delta": -6.74
+    },
+    "gnn_decoder_vs_langgraph_v4": {
+      "compared_runs": 100,
+      "gnn_decoder_wins": 0,
+      "langgraph_v4_wins": 64,
+      "ties": 36,
+      "mean_point_delta": -10.03
+    }
+  },
+  "paired_points_valid_only": {
+    "gnn_vs_solver_control": {
+      "compared_runs": 97,
+      "gnn_wins": 1,
+      "solver_control_wins": 0,
+      "ties": 96,
+      "mean_point_delta": 0.02
+    },
+    "gnn_decoder_vs_solver_control": {
+      "compared_runs": 97,
+      "gnn_decoder_wins": 1,
+      "solver_control_wins": 39,
+      "ties": 57,
+      "mean_point_delta": -3.39
+    },
+    "solver_control_vs_langgraph_v4": {
+      "compared_runs": 36,
+      "solver_control_wins": 0,
+      "langgraph_v4_wins": 0,
+      "ties": 36,
+      "mean_point_delta": 0.0
+    },
+    "gnn_decoder_vs_langgraph_v4": {
+      "compared_runs": 36,
+      "gnn_decoder_wins": 0,
+      "langgraph_v4_wins": 3,
+      "ties": 33,
+      "mean_point_delta": -0.83
+    }
+  },
+  "rows": [
+    {
+      "run_index": 0,
+      "sub_seed": 10781424524120207139,
+      "reasoning": {
+        "success": true,
+        "latency_s": 41.66,
+        "total_points": 7,
+        "total_fuel_km": 4.1,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.47,
+        "total_points": 7,
+        "total_fuel_km": 4.1,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.002,
+        "total_points": 7,
+        "total_fuel_km": 4.1,
+        "targets_visited": 2,
+        "targets_total": 15,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.014,
+        "model": "torch_gnn_v1",
+        "total_points": 7,
+        "total_fuel_km": 4.1,
+        "targets_visited": 2,
+        "targets_total": 15,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.019,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 7,
+        "total_fuel_km": 4.1,
+        "targets_visited": 2,
+        "targets_total": 15,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 1,
+      "sub_seed": 16337880269460020829,
+      "reasoning": {
+        "success": true,
+        "latency_s": 58.45,
+        "total_points": 42,
+        "total_fuel_km": 36.6,
+        "target_coverage": 0.467,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 35.76,
+        "total_points": 42,
+        "total_fuel_km": 36.6,
+        "target_coverage": 0.467,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.01,
+        "total_points": 36,
+        "total_fuel_km": 28.46,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.067,
+        "model": "torch_gnn_v1",
+        "total_points": 36,
+        "total_fuel_km": 28.46,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.082,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 20,
+        "total_fuel_km": 21.69,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 2,
+      "sub_seed": 7530698423427177828,
+      "reasoning": {
+        "success": true,
+        "latency_s": 95.22,
+        "total_points": 24,
+        "total_fuel_km": 18.18,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 34.73,
+        "total_points": 24,
+        "total_fuel_km": 18.18,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.007,
+        "total_points": 24,
+        "total_fuel_km": 18.18,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.04,
+        "model": "torch_gnn_v1",
+        "total_points": 24,
+        "total_fuel_km": 18.18,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.048,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 24,
+        "total_fuel_km": 18.74,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 3,
+      "sub_seed": 16111099277211367879,
+      "reasoning": {
+        "success": true,
+        "latency_s": 48.18,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 35.39,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.001,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "targets_visited": 0,
+        "targets_total": 15,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.002,
+        "model": "torch_gnn_v1",
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "targets_visited": 0,
+        "targets_total": 15,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.003,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "targets_visited": 0,
+        "targets_total": 15,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "error": null
+      }
+    },
+    {
+      "run_index": 4,
+      "sub_seed": 4904131672870577774,
+      "reasoning": {
+        "success": true,
+        "latency_s": 42.71,
+        "total_points": 45,
+        "total_fuel_km": 45.33,
+        "target_coverage": 0.733,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.29,
+        "total_points": 45,
+        "total_fuel_km": 45.33,
+        "target_coverage": 0.733,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.418,
+        "total_points": 21,
+        "total_fuel_km": 22.0,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.585,
+        "model": "torch_gnn_v1",
+        "total_points": 21,
+        "total_fuel_km": 22.0,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.211,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 16,
+        "total_fuel_km": 21.07,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 5,
+      "sub_seed": 2723198961054103200,
+      "reasoning": {
+        "success": true,
+        "latency_s": 56.55,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.99,
+        "total_points": 62,
+        "total_fuel_km": 38.19,
+        "target_coverage": 0.6,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.076,
+        "total_points": 62,
+        "total_fuel_km": 38.19,
+        "targets_visited": 9,
+        "targets_total": 15,
+        "target_coverage": 0.6,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.211,
+        "model": "torch_gnn_v1",
+        "total_points": 62,
+        "total_fuel_km": 38.19,
+        "targets_visited": 9,
+        "targets_total": 15,
+        "target_coverage": 0.6,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.177,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 55,
+        "total_fuel_km": 35.04,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 6,
+      "sub_seed": 3137385459229744713,
+      "reasoning": {
+        "success": true,
+        "latency_s": 46.51,
+        "total_points": 67,
+        "total_fuel_km": 36.46,
+        "target_coverage": 0.733,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 39.92,
+        "total_points": 67,
+        "total_fuel_km": 36.46,
+        "target_coverage": 0.733,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.354,
+        "total_points": 40,
+        "total_fuel_km": 20.39,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.456,
+        "model": "torch_gnn_v1",
+        "total_points": 40,
+        "total_fuel_km": 20.39,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.105,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 25,
+        "total_fuel_km": 18.93,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 7,
+      "sub_seed": 3400905040637023964,
+      "reasoning": {
+        "success": true,
+        "latency_s": 61.73,
+        "total_points": 80,
+        "total_fuel_km": 41.44,
+        "target_coverage": 0.867,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 42.73,
+        "total_points": 80,
+        "total_fuel_km": 41.44,
+        "target_coverage": 0.867,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 1.28,
+        "total_points": 70,
+        "total_fuel_km": 36.46,
+        "targets_visited": 10,
+        "targets_total": 15,
+        "target_coverage": 0.667,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 4.628,
+        "model": "torch_gnn_v1",
+        "total_points": 72,
+        "total_fuel_km": 35.78,
+        "targets_visited": 11,
+        "targets_total": 15,
+        "target_coverage": 0.733,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.192,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 71,
+        "total_fuel_km": 35.01,
+        "targets_visited": 12,
+        "targets_total": 15,
+        "target_coverage": 0.8,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 8,
+      "sub_seed": 9295406027992051630,
+      "reasoning": {
+        "success": true,
+        "latency_s": 52.01,
+        "total_points": 48,
+        "total_fuel_km": 30.26,
+        "target_coverage": 0.6,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.56,
+        "total_points": 48,
+        "total_fuel_km": 30.26,
+        "target_coverage": 0.6,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.03,
+        "total_points": 47,
+        "total_fuel_km": 25.55,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.092,
+        "model": "torch_gnn_v1",
+        "total_points": 47,
+        "total_fuel_km": 25.55,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.101,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 45,
+        "total_fuel_km": 25.75,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 9,
+      "sub_seed": 8693023736234640136,
+      "reasoning": {
+        "success": true,
+        "latency_s": 40.39,
+        "total_points": 28,
+        "total_fuel_km": 30.35,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 37.33,
+        "total_points": 28,
+        "total_fuel_km": 30.35,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.04,
+        "total_points": 28,
+        "total_fuel_km": 30.35,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.139,
+        "model": "torch_gnn_v1",
+        "total_points": 28,
+        "total_fuel_km": 30.35,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.116,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 28,
+        "total_fuel_km": 30.56,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 10,
+      "sub_seed": 15697158734222576131,
+      "reasoning": {
+        "success": true,
+        "latency_s": 48.56,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 34.24,
+        "total_points": 21,
+        "total_fuel_km": 41.37,
+        "target_coverage": 0.267,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.015,
+        "total_points": 20,
+        "total_fuel_km": 23.69,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.079,
+        "model": "torch_gnn_v1",
+        "total_points": 20,
+        "total_fuel_km": 23.69,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.061,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 20,
+        "total_fuel_km": 24.48,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 11,
+      "sub_seed": 17371676081899047174,
+      "reasoning": {
+        "success": true,
+        "latency_s": 43.98,
+        "total_points": 46,
+        "total_fuel_km": 40.83,
+        "target_coverage": 0.667,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 37.46,
+        "total_points": 46,
+        "total_fuel_km": 40.83,
+        "target_coverage": 0.667,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.123,
+        "total_points": 42,
+        "total_fuel_km": 33.77,
+        "targets_visited": 9,
+        "targets_total": 15,
+        "target_coverage": 0.6,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.216,
+        "model": "torch_gnn_v1",
+        "total_points": 42,
+        "total_fuel_km": 33.77,
+        "targets_visited": 9,
+        "targets_total": 15,
+        "target_coverage": 0.6,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.117,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 33,
+        "total_fuel_km": 34.6,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 12,
+      "sub_seed": 11142291470943315250,
+      "reasoning": {
+        "success": true,
+        "latency_s": 42.33,
+        "total_points": 51,
+        "total_fuel_km": 34.29,
+        "target_coverage": 0.667,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 39.17,
+        "total_points": 51,
+        "total_fuel_km": 34.29,
+        "target_coverage": 0.667,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.112,
+        "total_points": 51,
+        "total_fuel_km": 34.29,
+        "targets_visited": 10,
+        "targets_total": 15,
+        "target_coverage": 0.667,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.141,
+        "model": "torch_gnn_v1",
+        "total_points": 51,
+        "total_fuel_km": 34.29,
+        "targets_visited": 10,
+        "targets_total": 15,
+        "target_coverage": 0.667,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.096,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 36,
+        "total_fuel_km": 31.19,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 13,
+      "sub_seed": 15633892603326715215,
+      "reasoning": {
+        "success": true,
+        "latency_s": 48.91,
+        "total_points": 42,
+        "total_fuel_km": 20.48,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 39.54,
+        "total_points": 42,
+        "total_fuel_km": 20.48,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.015,
+        "total_points": 42,
+        "total_fuel_km": 20.48,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.081,
+        "model": "torch_gnn_v1",
+        "total_points": 42,
+        "total_fuel_km": 20.48,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.101,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 42,
+        "total_fuel_km": 21.53,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 14,
+      "sub_seed": 765615080356071720,
+      "reasoning": {
+        "success": true,
+        "latency_s": 45.42,
+        "total_points": 25,
+        "total_fuel_km": 22.19,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 35.9,
+        "total_points": 25,
+        "total_fuel_km": 22.19,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.007,
+        "total_points": 25,
+        "total_fuel_km": 22.19,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.039,
+        "model": "torch_gnn_v1",
+        "total_points": 25,
+        "total_fuel_km": 22.19,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.046,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 25,
+        "total_fuel_km": 22.19,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 15,
+      "sub_seed": 2795882610301242073,
+      "reasoning": {
+        "success": true,
+        "latency_s": 59.67,
+        "total_points": 44,
+        "total_fuel_km": 46.61,
+        "target_coverage": 0.667,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 37.64,
+        "total_points": 44,
+        "total_fuel_km": 46.61,
+        "target_coverage": 0.667,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.164,
+        "total_points": 36,
+        "total_fuel_km": 29.77,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.361,
+        "model": "torch_gnn_v1",
+        "total_points": 36,
+        "total_fuel_km": 29.77,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.238,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 36,
+        "total_fuel_km": 31.25,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 16,
+      "sub_seed": 17535286101566108708,
+      "reasoning": {
+        "success": true,
+        "latency_s": 42.79,
+        "total_points": 13,
+        "total_fuel_km": 12.81,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.02,
+        "total_points": 13,
+        "total_fuel_km": 12.81,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.001,
+        "total_points": 13,
+        "total_fuel_km": 12.81,
+        "targets_visited": 2,
+        "targets_total": 15,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.012,
+        "model": "torch_gnn_v1",
+        "total_points": 13,
+        "total_fuel_km": 12.81,
+        "targets_visited": 2,
+        "targets_total": 15,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.019,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 13,
+        "total_fuel_km": 12.81,
+        "targets_visited": 2,
+        "targets_total": 15,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 17,
+      "sub_seed": 8490829968039600398,
+      "reasoning": {
+        "success": true,
+        "latency_s": 38.99,
+        "total_points": 36,
+        "total_fuel_km": 32.21,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.99,
+        "total_points": 36,
+        "total_fuel_km": 32.21,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.046,
+        "total_points": 36,
+        "total_fuel_km": 32.21,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.157,
+        "model": "torch_gnn_v1",
+        "total_points": 36,
+        "total_fuel_km": 32.21,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.134,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 36,
+        "total_fuel_km": 32.21,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 18,
+      "sub_seed": 6288198950842265180,
+      "reasoning": {
+        "success": true,
+        "latency_s": 42.68,
+        "total_points": 65,
+        "total_fuel_km": 32.58,
+        "target_coverage": 0.6,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.29,
+        "total_points": 66,
+        "total_fuel_km": 33.82,
+        "target_coverage": 0.667,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.103,
+        "total_points": 66,
+        "total_fuel_km": 33.82,
+        "targets_visited": 10,
+        "targets_total": 15,
+        "target_coverage": 0.667,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.172,
+        "model": "torch_gnn_v1",
+        "total_points": 66,
+        "total_fuel_km": 33.82,
+        "targets_visited": 10,
+        "targets_total": 15,
+        "target_coverage": 0.667,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.12,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 66,
+        "total_fuel_km": 34.46,
+        "targets_visited": 10,
+        "targets_total": 15,
+        "target_coverage": 0.667,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 19,
+      "sub_seed": 8624585753910775333,
+      "reasoning": {
+        "success": true,
+        "latency_s": 49.39,
+        "total_points": 64,
+        "total_fuel_km": 45.32,
+        "target_coverage": 0.867,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 35.79,
+        "total_points": 64,
+        "total_fuel_km": 45.32,
+        "target_coverage": 0.867,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 1.517,
+        "total_points": 25,
+        "total_fuel_km": 23.49,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 4.973,
+        "model": "torch_gnn_v1",
+        "total_points": 25,
+        "total_fuel_km": 23.49,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.271,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 18,
+        "total_fuel_km": 19.69,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 20,
+      "sub_seed": 10399443427617034880,
+      "reasoning": {
+        "success": true,
+        "latency_s": 46.79,
+        "total_points": 40,
+        "total_fuel_km": 26.75,
+        "target_coverage": 0.467,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.35,
+        "total_points": 40,
+        "total_fuel_km": 26.75,
+        "target_coverage": 0.467,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.008,
+        "total_points": 37,
+        "total_fuel_km": 23.61,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.066,
+        "model": "torch_gnn_v1",
+        "total_points": 37,
+        "total_fuel_km": 23.61,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.084,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 30,
+        "total_fuel_km": 23.92,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 21,
+      "sub_seed": 4426142659178532312,
+      "reasoning": {
+        "success": true,
+        "latency_s": 57.52,
+        "total_points": 41,
+        "total_fuel_km": 40.74,
+        "target_coverage": 0.533,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 38.55,
+        "total_points": 41,
+        "total_fuel_km": 40.74,
+        "target_coverage": 0.533,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.017,
+        "total_points": 34,
+        "total_fuel_km": 27.1,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.091,
+        "model": "torch_gnn_v1",
+        "total_points": 34,
+        "total_fuel_km": 27.1,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.097,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 30,
+        "total_fuel_km": 20.61,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 22,
+      "sub_seed": 14662560226511965882,
+      "reasoning": {
+        "success": true,
+        "latency_s": 58.69,
+        "total_points": 17,
+        "total_fuel_km": 26.11,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 34.61,
+        "total_points": 17,
+        "total_fuel_km": 26.11,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.014,
+        "total_points": 17,
+        "total_fuel_km": 26.11,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.059,
+        "model": "torch_gnn_v1",
+        "total_points": 17,
+        "total_fuel_km": 26.11,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.065,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 17,
+        "total_fuel_km": 26.59,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 23,
+      "sub_seed": 2243434192061933075,
+      "reasoning": {
+        "success": true,
+        "latency_s": 51.43,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.86,
+        "total_points": 59,
+        "total_fuel_km": 25.3,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.012,
+        "total_points": 59,
+        "total_fuel_km": 25.3,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.072,
+        "model": "torch_gnn_v1",
+        "total_points": 59,
+        "total_fuel_km": 25.3,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.094,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 59,
+        "total_fuel_km": 26.79,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 24,
+      "sub_seed": 1705205155173259430,
+      "reasoning": {
+        "success": true,
+        "latency_s": 38.71,
+        "total_points": 37,
+        "total_fuel_km": 44.13,
+        "target_coverage": 0.533,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 35.64,
+        "total_points": 37,
+        "total_fuel_km": 44.13,
+        "target_coverage": 0.533,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.017,
+        "total_points": 23,
+        "total_fuel_km": 23.41,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.089,
+        "model": "torch_gnn_v1",
+        "total_points": 23,
+        "total_fuel_km": 23.41,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.095,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 16,
+        "total_fuel_km": 24.01,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 25,
+      "sub_seed": 3176040782140943216,
+      "reasoning": {
+        "success": true,
+        "latency_s": 52.38,
+        "total_points": 50,
+        "total_fuel_km": 29.55,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 40.8,
+        "total_points": 50,
+        "total_fuel_km": 29.55,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.033,
+        "total_points": 50,
+        "total_fuel_km": 29.55,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.135,
+        "model": "torch_gnn_v1",
+        "total_points": 50,
+        "total_fuel_km": 29.55,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.131,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 50,
+        "total_fuel_km": 30.47,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 26,
+      "sub_seed": 18072601762995445758,
+      "reasoning": {
+        "success": true,
+        "latency_s": 40.87,
+        "total_points": 55,
+        "total_fuel_km": 39.35,
+        "target_coverage": 0.667,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 34.4,
+        "total_points": 55,
+        "total_fuel_km": 39.35,
+        "target_coverage": 0.667,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.103,
+        "total_points": 54,
+        "total_fuel_km": 26.6,
+        "targets_visited": 9,
+        "targets_total": 15,
+        "target_coverage": 0.6,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.181,
+        "model": "torch_gnn_v1",
+        "total_points": 54,
+        "total_fuel_km": 26.6,
+        "targets_visited": 9,
+        "targets_total": 15,
+        "target_coverage": 0.6,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.116,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 54,
+        "total_fuel_km": 30.52,
+        "targets_visited": 9,
+        "targets_total": 15,
+        "target_coverage": 0.6,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 27,
+      "sub_seed": 11396019339246593890,
+      "reasoning": {
+        "success": true,
+        "latency_s": 53.99,
+        "total_points": 38,
+        "total_fuel_km": 34.13,
+        "target_coverage": 0.4,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 38.91,
+        "total_points": 38,
+        "total_fuel_km": 34.13,
+        "target_coverage": 0.4,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.039,
+        "total_points": 29,
+        "total_fuel_km": 30.05,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.149,
+        "model": "torch_gnn_v1",
+        "total_points": 29,
+        "total_fuel_km": 30.05,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.125,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 23,
+        "total_fuel_km": 29.66,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 28,
+      "sub_seed": 17696016144165401386,
+      "reasoning": {
+        "success": true,
+        "latency_s": 62.79,
+        "total_points": 37,
+        "total_fuel_km": 20.43,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 35.42,
+        "total_points": 37,
+        "total_fuel_km": 20.43,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.002,
+        "total_points": 37,
+        "total_fuel_km": 20.43,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.031,
+        "model": "torch_gnn_v1",
+        "total_points": 37,
+        "total_fuel_km": 20.43,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.047,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 37,
+        "total_fuel_km": 20.46,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 29,
+      "sub_seed": 12264785615300908581,
+      "reasoning": {
+        "success": true,
+        "latency_s": 57.13,
+        "total_points": 36,
+        "total_fuel_km": 24.96,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 41.33,
+        "total_points": 36,
+        "total_fuel_km": 24.96,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.01,
+        "total_points": 36,
+        "total_fuel_km": 24.96,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.064,
+        "model": "torch_gnn_v1",
+        "total_points": 36,
+        "total_fuel_km": 24.96,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.091,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 36,
+        "total_fuel_km": 29.08,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 30,
+      "sub_seed": 16903449610369438592,
+      "reasoning": {
+        "success": true,
+        "latency_s": 30.31,
+        "total_points": 63,
+        "total_fuel_km": 36.41,
+        "target_coverage": 0.667,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 40.61,
+        "total_points": 63,
+        "total_fuel_km": 36.41,
+        "target_coverage": 0.667,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.105,
+        "total_points": 54,
+        "total_fuel_km": 32.04,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.183,
+        "model": "torch_gnn_v1",
+        "total_points": 54,
+        "total_fuel_km": 32.04,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.122,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 42,
+        "total_fuel_km": 32.35,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 31,
+      "sub_seed": 14513827572305715497,
+      "reasoning": {
+        "success": true,
+        "latency_s": 39.9,
+        "total_points": 37,
+        "total_fuel_km": 29.74,
+        "target_coverage": 0.533,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 35.96,
+        "total_points": 37,
+        "total_fuel_km": 29.74,
+        "target_coverage": 0.533,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.01,
+        "total_points": 36,
+        "total_fuel_km": 25.92,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.064,
+        "model": "torch_gnn_v1",
+        "total_points": 36,
+        "total_fuel_km": 25.92,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.083,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 25,
+        "total_fuel_km": 24.82,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 32,
+      "sub_seed": 2035671820617546479,
+      "reasoning": {
+        "success": true,
+        "latency_s": 56.28,
+        "total_points": 25,
+        "total_fuel_km": 15.85,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 38.15,
+        "total_points": 25,
+        "total_fuel_km": 15.84,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.002,
+        "total_points": 25,
+        "total_fuel_km": 15.84,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.025,
+        "model": "torch_gnn_v1",
+        "total_points": 25,
+        "total_fuel_km": 15.84,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.038,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 25,
+        "total_fuel_km": 16.41,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 33,
+      "sub_seed": 13272444526835967075,
+      "reasoning": {
+        "success": true,
+        "latency_s": 41.39,
+        "total_points": 25,
+        "total_fuel_km": 28.89,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 38.97,
+        "total_points": 25,
+        "total_fuel_km": 28.89,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.003,
+        "total_points": 25,
+        "total_fuel_km": 28.89,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.041,
+        "model": "torch_gnn_v1",
+        "total_points": 25,
+        "total_fuel_km": 28.89,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.062,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 25,
+        "total_fuel_km": 30.29,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 34,
+      "sub_seed": 5062493318666208240,
+      "reasoning": {
+        "success": true,
+        "latency_s": 44.09,
+        "total_points": 22,
+        "total_fuel_km": 49.36,
+        "target_coverage": 0.333,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 38.4,
+        "total_points": 22,
+        "total_fuel_km": 49.36,
+        "target_coverage": 0.333,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.092,
+        "total_points": 13,
+        "total_fuel_km": 21.04,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.294,
+        "model": "torch_gnn_v1",
+        "total_points": 13,
+        "total_fuel_km": 21.04,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.216,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 13,
+        "total_fuel_km": 21.81,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 35,
+      "sub_seed": 16593110259889090444,
+      "reasoning": {
+        "success": true,
+        "latency_s": 67.1,
+        "total_points": 65,
+        "total_fuel_km": 45.23,
+        "target_coverage": 0.8,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 35.24,
+        "total_points": 65,
+        "total_fuel_km": 45.23,
+        "target_coverage": 0.8,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 1.418,
+        "total_points": 33,
+        "total_fuel_km": 20.3,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 1.644,
+        "model": "torch_gnn_v1",
+        "total_points": 33,
+        "total_fuel_km": 20.3,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.287,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 31,
+        "total_fuel_km": 19.9,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 36,
+      "sub_seed": 6876767819148598566,
+      "reasoning": {
+        "success": true,
+        "latency_s": 40.3,
+        "total_points": 46,
+        "total_fuel_km": 42.05,
+        "target_coverage": 0.6,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 37.14,
+        "total_points": 46,
+        "total_fuel_km": 42.05,
+        "target_coverage": 0.6,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.274,
+        "total_points": 15,
+        "total_fuel_km": 12.68,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.816,
+        "model": "torch_gnn_v1",
+        "total_points": 15,
+        "total_fuel_km": 12.68,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.558,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 15,
+        "total_fuel_km": 12.68,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 37,
+      "sub_seed": 948778598592939169,
+      "reasoning": {
+        "success": true,
+        "latency_s": 46.51,
+        "total_points": 67,
+        "total_fuel_km": 40.19,
+        "target_coverage": 0.867,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 41.79,
+        "total_points": 67,
+        "total_fuel_km": 40.19,
+        "target_coverage": 0.867,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 1.331,
+        "total_points": 61,
+        "total_fuel_km": 29.53,
+        "targets_visited": 11,
+        "targets_total": 15,
+        "target_coverage": 0.733,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 4.739,
+        "model": "torch_gnn_v1",
+        "total_points": 61,
+        "total_fuel_km": 29.53,
+        "targets_visited": 11,
+        "targets_total": 15,
+        "target_coverage": 0.733,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.19,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 61,
+        "total_fuel_km": 30.3,
+        "targets_visited": 11,
+        "targets_total": 15,
+        "target_coverage": 0.733,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 38,
+      "sub_seed": 6371442674579788979,
+      "reasoning": {
+        "success": true,
+        "latency_s": 46.24,
+        "total_points": 24,
+        "total_fuel_km": 32.36,
+        "target_coverage": 0.4,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 38.98,
+        "total_points": 24,
+        "total_fuel_km": 32.36,
+        "target_coverage": 0.4,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.036,
+        "total_points": 23,
+        "total_fuel_km": 26.93,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.103,
+        "model": "torch_gnn_v1",
+        "total_points": 23,
+        "total_fuel_km": 26.93,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.073,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 22,
+        "total_fuel_km": 26.64,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 39,
+      "sub_seed": 2600385884309532612,
+      "reasoning": {
+        "success": true,
+        "latency_s": 43.16,
+        "total_points": 29,
+        "total_fuel_km": 34.0,
+        "target_coverage": 0.333,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 37.19,
+        "total_points": 29,
+        "total_fuel_km": 34.0,
+        "target_coverage": 0.333,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.002,
+        "total_points": 16,
+        "total_fuel_km": 19.44,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.007,
+        "model": "torch_gnn_v1",
+        "total_points": 16,
+        "total_fuel_km": 19.44,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.01,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 16,
+        "total_fuel_km": 19.44,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 40,
+      "sub_seed": 17940864411525918418,
+      "reasoning": {
+        "success": true,
+        "latency_s": 45.38,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 34.2,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.001,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "targets_visited": 0,
+        "targets_total": 15,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.002,
+        "model": "torch_gnn_v1",
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "targets_visited": 0,
+        "targets_total": 15,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.004,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "targets_visited": 0,
+        "targets_total": 15,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "error": null
+      }
+    },
+    {
+      "run_index": 41,
+      "sub_seed": 7821145462208353364,
+      "reasoning": {
+        "success": true,
+        "latency_s": 37.66,
+        "total_points": 55,
+        "total_fuel_km": 42.46,
+        "target_coverage": 0.733,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 40.49,
+        "total_points": 55,
+        "total_fuel_km": 42.46,
+        "target_coverage": 0.733,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.498,
+        "total_points": 48,
+        "total_fuel_km": 37.91,
+        "targets_visited": 9,
+        "targets_total": 15,
+        "target_coverage": 0.6,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.65,
+        "model": "torch_gnn_v1",
+        "total_points": 48,
+        "total_fuel_km": 37.91,
+        "targets_visited": 9,
+        "targets_total": 15,
+        "target_coverage": 0.6,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.234,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 44,
+        "total_fuel_km": 34.14,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 42,
+      "sub_seed": 13921771379428401630,
+      "reasoning": {
+        "success": true,
+        "latency_s": 59.65,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.47,
+        "total_points": 47,
+        "total_fuel_km": 38.0,
+        "target_coverage": 0.533,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.089,
+        "total_points": 40,
+        "total_fuel_km": 27.79,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.299,
+        "model": "torch_gnn_v1",
+        "total_points": 40,
+        "total_fuel_km": 27.79,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.24,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 40,
+        "total_fuel_km": 29.63,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 43,
+      "sub_seed": 12475405093741978754,
+      "reasoning": {
+        "success": true,
+        "latency_s": 47.46,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 38.55,
+        "total_points": 56,
+        "total_fuel_km": 54.68,
+        "target_coverage": 0.667,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.461,
+        "total_points": 35,
+        "total_fuel_km": 27.35,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 1.64,
+        "model": "torch_gnn_v1",
+        "total_points": 35,
+        "total_fuel_km": 27.35,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.845,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 26,
+        "total_fuel_km": 23.93,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 44,
+      "sub_seed": 6567956576030159274,
+      "reasoning": {
+        "success": true,
+        "latency_s": 45.96,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 37.57,
+        "total_points": 58,
+        "total_fuel_km": 37.84,
+        "target_coverage": 0.6,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.032,
+        "total_points": 54,
+        "total_fuel_km": 34.65,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.096,
+        "model": "torch_gnn_v1",
+        "total_points": 54,
+        "total_fuel_km": 34.65,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.107,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 48,
+        "total_fuel_km": 36.58,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 45,
+      "sub_seed": 18024210103112560232,
+      "reasoning": {
+        "success": true,
+        "latency_s": 36.5,
+        "total_points": 61,
+        "total_fuel_km": 46.68,
+        "target_coverage": 0.867,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 37.17,
+        "total_points": 61,
+        "total_fuel_km": 45.77,
+        "target_coverage": 0.867,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 1.335,
+        "total_points": 49,
+        "total_fuel_km": 32.23,
+        "targets_visited": 10,
+        "targets_total": 15,
+        "target_coverage": 0.667,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 4.601,
+        "model": "torch_gnn_v1",
+        "total_points": 49,
+        "total_fuel_km": 32.23,
+        "targets_visited": 10,
+        "targets_total": 15,
+        "target_coverage": 0.667,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.093,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 37,
+        "total_fuel_km": 32.29,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 46,
+      "sub_seed": 13727780806404808462,
+      "reasoning": {
+        "success": true,
+        "latency_s": 60.63,
+        "total_points": 7,
+        "total_fuel_km": 13.91,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 37.7,
+        "total_points": 7,
+        "total_fuel_km": 13.91,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.001,
+        "total_points": 7,
+        "total_fuel_km": 13.91,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.004,
+        "model": "torch_gnn_v1",
+        "total_points": 7,
+        "total_fuel_km": 13.91,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.013,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 7,
+        "total_fuel_km": 13.91,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 47,
+      "sub_seed": 17094684926535475926,
+      "reasoning": {
+        "success": true,
+        "latency_s": 72.22,
+        "total_points": 50,
+        "total_fuel_km": 37.4,
+        "target_coverage": 0.8,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 38.39,
+        "total_points": 50,
+        "total_fuel_km": 37.4,
+        "target_coverage": 0.8,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 1.511,
+        "total_points": 50,
+        "total_fuel_km": 37.4,
+        "targets_visited": 12,
+        "targets_total": 15,
+        "target_coverage": 0.8,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 1.847,
+        "model": "torch_gnn_v1",
+        "total_points": 50,
+        "total_fuel_km": 37.4,
+        "targets_visited": 12,
+        "targets_total": 15,
+        "target_coverage": 0.8,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.465,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 50,
+        "total_fuel_km": 38.5,
+        "targets_visited": 12,
+        "targets_total": 15,
+        "target_coverage": 0.8,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 48,
+      "sub_seed": 7695400604693674652,
+      "reasoning": {
+        "success": true,
+        "latency_s": 49.98,
+        "total_points": 21,
+        "total_fuel_km": 11.84,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.09,
+        "total_points": 21,
+        "total_fuel_km": 11.84,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.001,
+        "total_points": 21,
+        "total_fuel_km": 11.84,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.007,
+        "model": "torch_gnn_v1",
+        "total_points": 21,
+        "total_fuel_km": 11.84,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.01,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 21,
+        "total_fuel_km": 12.31,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 49,
+      "sub_seed": 17648777001744365633,
+      "reasoning": {
+        "success": true,
+        "latency_s": 57.62,
+        "total_points": 43,
+        "total_fuel_km": 31.72,
+        "target_coverage": 0.4,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 33.33,
+        "total_points": 43,
+        "total_fuel_km": 31.72,
+        "target_coverage": 0.4,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.03,
+        "total_points": 29,
+        "total_fuel_km": 25.46,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.082,
+        "model": "torch_gnn_v1",
+        "total_points": 29,
+        "total_fuel_km": 25.46,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.068,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 29,
+        "total_fuel_km": 25.72,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 50,
+      "sub_seed": 10329649857076258202,
+      "reasoning": {
+        "success": true,
+        "latency_s": 67.74,
+        "total_points": 56,
+        "total_fuel_km": 38.46,
+        "target_coverage": 0.8,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 38.28,
+        "total_points": 56,
+        "total_fuel_km": 38.46,
+        "target_coverage": 0.8,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 1.4,
+        "total_points": 56,
+        "total_fuel_km": 38.46,
+        "targets_visited": 12,
+        "targets_total": 15,
+        "target_coverage": 0.8,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 1.589,
+        "model": "torch_gnn_v1",
+        "total_points": 56,
+        "total_fuel_km": 38.46,
+        "targets_visited": 12,
+        "targets_total": 15,
+        "target_coverage": 0.8,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.317,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 56,
+        "total_fuel_km": 38.76,
+        "targets_visited": 12,
+        "targets_total": 15,
+        "target_coverage": 0.8,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 51,
+      "sub_seed": 4416627550926993103,
+      "reasoning": {
+        "success": true,
+        "latency_s": 37.37,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 37.76,
+        "total_points": 56,
+        "total_fuel_km": 41.16,
+        "target_coverage": 0.6,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.135,
+        "total_points": 31,
+        "total_fuel_km": 20.17,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.365,
+        "model": "torch_gnn_v1",
+        "total_points": 31,
+        "total_fuel_km": 20.17,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.268,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 31,
+        "total_fuel_km": 22.82,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 52,
+      "sub_seed": 16616524483559540626,
+      "reasoning": {
+        "success": true,
+        "latency_s": 45.66,
+        "total_points": 56,
+        "total_fuel_km": 46.29,
+        "target_coverage": 0.667,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 41.75,
+        "total_points": 56,
+        "total_fuel_km": 46.29,
+        "target_coverage": 0.667,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.511,
+        "total_points": 32,
+        "total_fuel_km": 21.7,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 1.376,
+        "model": "torch_gnn_v1",
+        "total_points": 32,
+        "total_fuel_km": 21.7,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.907,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 26,
+        "total_fuel_km": 16.18,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 53,
+      "sub_seed": 2410712870531502046,
+      "reasoning": {
+        "success": true,
+        "latency_s": 43.98,
+        "total_points": 30,
+        "total_fuel_km": 34.88,
+        "target_coverage": 0.333,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 35.87,
+        "total_points": 30,
+        "total_fuel_km": 34.88,
+        "target_coverage": 0.333,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.032,
+        "total_points": 27,
+        "total_fuel_km": 30.06,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.118,
+        "model": "torch_gnn_v1",
+        "total_points": 27,
+        "total_fuel_km": 30.06,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.102,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 21,
+        "total_fuel_km": 31.28,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 54,
+      "sub_seed": 14387256941329755445,
+      "reasoning": {
+        "success": true,
+        "latency_s": 48.54,
+        "total_points": 15,
+        "total_fuel_km": 29.73,
+        "target_coverage": 0.267,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 35.13,
+        "total_points": 15,
+        "total_fuel_km": 29.73,
+        "target_coverage": 0.267,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.002,
+        "total_points": 13,
+        "total_fuel_km": 26.81,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.027,
+        "model": "torch_gnn_v1",
+        "total_points": 13,
+        "total_fuel_km": 26.81,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.035,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 13,
+        "total_fuel_km": 26.81,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 55,
+      "sub_seed": 4628810227544979357,
+      "reasoning": {
+        "success": true,
+        "latency_s": 42.94,
+        "total_points": 10,
+        "total_fuel_km": 8.88,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 37.07,
+        "total_points": 10,
+        "total_fuel_km": 8.88,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.001,
+        "total_points": 10,
+        "total_fuel_km": 8.88,
+        "targets_visited": 2,
+        "targets_total": 15,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.012,
+        "model": "torch_gnn_v1",
+        "total_points": 10,
+        "total_fuel_km": 8.88,
+        "targets_visited": 2,
+        "targets_total": 15,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.019,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 10,
+        "total_fuel_km": 8.88,
+        "targets_visited": 2,
+        "targets_total": 15,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 56,
+      "sub_seed": 862320772933518041,
+      "reasoning": {
+        "success": true,
+        "latency_s": 44.72,
+        "total_points": 46,
+        "total_fuel_km": 32.83,
+        "target_coverage": 0.6,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 38.35,
+        "total_points": 46,
+        "total_fuel_km": 32.83,
+        "target_coverage": 0.6,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.084,
+        "total_points": 29,
+        "total_fuel_km": 22.5,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.259,
+        "model": "torch_gnn_v1",
+        "total_points": 29,
+        "total_fuel_km": 22.5,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.195,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 22,
+        "total_fuel_km": 17.46,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 57,
+      "sub_seed": 5061898682924433286,
+      "reasoning": {
+        "success": true,
+        "latency_s": 59.11,
+        "total_points": 28,
+        "total_fuel_km": 34.19,
+        "target_coverage": 0.4,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 35.05,
+        "total_points": 28,
+        "total_fuel_km": 34.19,
+        "target_coverage": 0.4,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.048,
+        "total_points": 13,
+        "total_fuel_km": 17.03,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.176,
+        "model": "torch_gnn_v1",
+        "total_points": 13,
+        "total_fuel_km": 17.03,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.145,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 13,
+        "total_fuel_km": 17.96,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 58,
+      "sub_seed": 14277846304045786225,
+      "reasoning": {
+        "success": true,
+        "latency_s": 41.71,
+        "total_points": 39,
+        "total_fuel_km": 36.74,
+        "target_coverage": 0.467,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 35.94,
+        "total_points": 39,
+        "total_fuel_km": 36.74,
+        "target_coverage": 0.467,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.063,
+        "total_points": 37,
+        "total_fuel_km": 33.16,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.243,
+        "model": "torch_gnn_v1",
+        "total_points": 37,
+        "total_fuel_km": 33.16,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.199,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 33,
+        "total_fuel_km": 31.61,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 59,
+      "sub_seed": 12708095951826425388,
+      "reasoning": {
+        "success": true,
+        "latency_s": 38.3,
+        "total_points": 40,
+        "total_fuel_km": 33.97,
+        "target_coverage": 0.533,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 34.72,
+        "total_points": 40,
+        "total_fuel_km": 33.97,
+        "target_coverage": 0.533,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.042,
+        "total_points": 27,
+        "total_fuel_km": 21.1,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.16,
+        "model": "torch_gnn_v1",
+        "total_points": 27,
+        "total_fuel_km": 21.1,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.151,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 27,
+        "total_fuel_km": 21.42,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 60,
+      "sub_seed": 10135792515321470043,
+      "reasoning": {
+        "success": true,
+        "latency_s": 45.07,
+        "total_points": 51,
+        "total_fuel_km": 28.54,
+        "target_coverage": 0.6,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.89,
+        "total_points": 51,
+        "total_fuel_km": 28.54,
+        "target_coverage": 0.6,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.03,
+        "total_points": 49,
+        "total_fuel_km": 25.15,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.091,
+        "model": "torch_gnn_v1",
+        "total_points": 49,
+        "total_fuel_km": 25.15,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.094,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 32,
+        "total_fuel_km": 23.01,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 61,
+      "sub_seed": 4512996001246009292,
+      "reasoning": {
+        "success": true,
+        "latency_s": 45.37,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 34.11,
+        "total_points": 41,
+        "total_fuel_km": 43.93,
+        "target_coverage": 0.467,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.241,
+        "total_points": 31,
+        "total_fuel_km": 23.15,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.73,
+        "model": "torch_gnn_v1",
+        "total_points": 31,
+        "total_fuel_km": 23.15,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.529,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 31,
+        "total_fuel_km": 23.75,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 62,
+      "sub_seed": 13332670222005557489,
+      "reasoning": {
+        "success": true,
+        "latency_s": 57.47,
+        "total_points": 69,
+        "total_fuel_km": 45.03,
+        "target_coverage": 0.667,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 39.09,
+        "total_points": 69,
+        "total_fuel_km": 45.03,
+        "target_coverage": 0.667,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.164,
+        "total_points": 59,
+        "total_fuel_km": 35.02,
+        "targets_visited": 9,
+        "targets_total": 15,
+        "target_coverage": 0.6,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.361,
+        "model": "torch_gnn_v1",
+        "total_points": 59,
+        "total_fuel_km": 35.02,
+        "targets_visited": 9,
+        "targets_total": 15,
+        "target_coverage": 0.6,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.233,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 48,
+        "total_fuel_km": 37.48,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 63,
+      "sub_seed": 7176877102785807455,
+      "reasoning": {
+        "success": true,
+        "latency_s": 60.0,
+        "total_points": 46,
+        "total_fuel_km": 36.07,
+        "target_coverage": 0.4,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.66,
+        "total_points": 46,
+        "total_fuel_km": 36.07,
+        "target_coverage": 0.4,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.009,
+        "total_points": 29,
+        "total_fuel_km": 23.56,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.062,
+        "model": "torch_gnn_v1",
+        "total_points": 29,
+        "total_fuel_km": 23.56,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.07,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 29,
+        "total_fuel_km": 24.01,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 64,
+      "sub_seed": 16838264935528606465,
+      "reasoning": {
+        "success": true,
+        "latency_s": 40.38,
+        "total_points": 69,
+        "total_fuel_km": 39.37,
+        "target_coverage": 0.867,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 40.34,
+        "total_points": 69,
+        "total_fuel_km": 38.23,
+        "target_coverage": 0.867,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 1.379,
+        "total_points": 66,
+        "total_fuel_km": 29.84,
+        "targets_visited": 11,
+        "targets_total": 15,
+        "target_coverage": 0.733,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 4.785,
+        "model": "torch_gnn_v1",
+        "total_points": 66,
+        "total_fuel_km": 29.84,
+        "targets_visited": 11,
+        "targets_total": 15,
+        "target_coverage": 0.733,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.205,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 32,
+        "total_fuel_km": 30.4,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 65,
+      "sub_seed": 6169086106937594940,
+      "reasoning": {
+        "success": true,
+        "latency_s": 59.08,
+        "total_points": 33,
+        "total_fuel_km": 32.51,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 35.82,
+        "total_points": 33,
+        "total_fuel_km": 32.51,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.013,
+        "total_points": 33,
+        "total_fuel_km": 32.51,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.029,
+        "model": "torch_gnn_v1",
+        "total_points": 33,
+        "total_fuel_km": 32.51,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.028,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 33,
+        "total_fuel_km": 36.05,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 66,
+      "sub_seed": 2690334464821214906,
+      "reasoning": {
+        "success": true,
+        "latency_s": 41.09,
+        "total_points": 22,
+        "total_fuel_km": 15.77,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 35.97,
+        "total_points": 22,
+        "total_fuel_km": 15.77,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.002,
+        "total_points": 22,
+        "total_fuel_km": 15.77,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.006,
+        "model": "torch_gnn_v1",
+        "total_points": 22,
+        "total_fuel_km": 15.77,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.009,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 22,
+        "total_fuel_km": 16.26,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 67,
+      "sub_seed": 8190635877610144935,
+      "reasoning": {
+        "success": true,
+        "latency_s": 42.81,
+        "total_points": 39,
+        "total_fuel_km": 30.04,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.35,
+        "total_points": 39,
+        "total_fuel_km": 30.04,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.009,
+        "total_points": 39,
+        "total_fuel_km": 30.04,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.027,
+        "model": "torch_gnn_v1",
+        "total_points": 39,
+        "total_fuel_km": 30.04,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.057,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 31,
+        "total_fuel_km": 25.36,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 68,
+      "sub_seed": 11916638599534328896,
+      "reasoning": {
+        "success": true,
+        "latency_s": 34.96,
+        "total_points": 38,
+        "total_fuel_km": 46.02,
+        "target_coverage": 0.733,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 40.2,
+        "total_points": 38,
+        "total_fuel_km": 46.02,
+        "target_coverage": 0.733,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.399,
+        "total_points": 27,
+        "total_fuel_km": 30.83,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.478,
+        "model": "torch_gnn_v1",
+        "total_points": 27,
+        "total_fuel_km": 30.83,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.129,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 23,
+        "total_fuel_km": 29.84,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 69,
+      "sub_seed": 16522867493820329175,
+      "reasoning": {
+        "success": true,
+        "latency_s": 52.34,
+        "total_points": 57,
+        "total_fuel_km": 37.24,
+        "target_coverage": 0.6,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 33.09,
+        "total_points": 57,
+        "total_fuel_km": 37.24,
+        "target_coverage": 0.6,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.035,
+        "total_points": 52,
+        "total_fuel_km": 34.11,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.053,
+        "model": "torch_gnn_v1",
+        "total_points": 52,
+        "total_fuel_km": 34.11,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.047,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 41,
+        "total_fuel_km": 31.25,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 70,
+      "sub_seed": 16149635527764395080,
+      "reasoning": {
+        "success": true,
+        "latency_s": 44.84,
+        "total_points": 54,
+        "total_fuel_km": 41.95,
+        "target_coverage": 0.8,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 38.82,
+        "total_points": 54,
+        "total_fuel_km": 41.95,
+        "target_coverage": 0.8,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 1.387,
+        "total_points": 52,
+        "total_fuel_km": 34.67,
+        "targets_visited": 11,
+        "targets_total": 15,
+        "target_coverage": 0.733,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 1.518,
+        "model": "torch_gnn_v1",
+        "total_points": 52,
+        "total_fuel_km": 34.67,
+        "targets_visited": 11,
+        "targets_total": 15,
+        "target_coverage": 0.733,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.255,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 44,
+        "total_fuel_km": 30.25,
+        "targets_visited": 10,
+        "targets_total": 15,
+        "target_coverage": 0.667,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 71,
+      "sub_seed": 8844955278062646082,
+      "reasoning": {
+        "success": true,
+        "latency_s": 46.5,
+        "total_points": 21,
+        "total_fuel_km": 13.99,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 37.33,
+        "total_points": 21,
+        "total_fuel_km": 13.99,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.001,
+        "total_points": 21,
+        "total_fuel_km": 13.99,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.019,
+        "model": "torch_gnn_v1",
+        "total_points": 21,
+        "total_fuel_km": 13.99,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.029,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 21,
+        "total_fuel_km": 14.29,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 72,
+      "sub_seed": 15816345905616429031,
+      "reasoning": {
+        "success": true,
+        "latency_s": 70.18,
+        "total_points": 42,
+        "total_fuel_km": 26.04,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 34.42,
+        "total_points": 42,
+        "total_fuel_km": 26.04,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.016,
+        "total_points": 42,
+        "total_fuel_km": 26.04,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.08,
+        "model": "torch_gnn_v1",
+        "total_points": 42,
+        "total_fuel_km": 26.04,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.091,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 42,
+        "total_fuel_km": 28.29,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 73,
+      "sub_seed": 15880518330873768265,
+      "reasoning": {
+        "success": true,
+        "latency_s": 48.67,
+        "total_points": 73,
+        "total_fuel_km": 38.45,
+        "target_coverage": 0.733,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.66,
+        "total_points": 73,
+        "total_fuel_km": 38.45,
+        "target_coverage": 0.733,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.359,
+        "total_points": 62,
+        "total_fuel_km": 28.76,
+        "targets_visited": 9,
+        "targets_total": 15,
+        "target_coverage": 0.6,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.448,
+        "model": "torch_gnn_v1",
+        "total_points": 62,
+        "total_fuel_km": 28.76,
+        "targets_visited": 9,
+        "targets_total": 15,
+        "target_coverage": 0.6,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.128,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 62,
+        "total_fuel_km": 30.4,
+        "targets_visited": 9,
+        "targets_total": 15,
+        "target_coverage": 0.6,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 74,
+      "sub_seed": 617542897588254312,
+      "reasoning": {
+        "success": true,
+        "latency_s": 69.62,
+        "total_points": 65,
+        "total_fuel_km": 48.08,
+        "target_coverage": 0.733,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 38.36,
+        "total_points": 65,
+        "total_fuel_km": 48.08,
+        "target_coverage": 0.733,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.437,
+        "total_points": 36,
+        "total_fuel_km": 20.1,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.632,
+        "model": "torch_gnn_v1",
+        "total_points": 36,
+        "total_fuel_km": 20.1,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.221,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 36,
+        "total_fuel_km": 23.04,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 75,
+      "sub_seed": 8985353674541161858,
+      "reasoning": {
+        "success": true,
+        "latency_s": 45.26,
+        "total_points": 43,
+        "total_fuel_km": 44.48,
+        "target_coverage": 0.533,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 42.6,
+        "total_points": 43,
+        "total_fuel_km": 44.48,
+        "target_coverage": 0.533,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.052,
+        "total_points": 42,
+        "total_fuel_km": 36.62,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.209,
+        "model": "torch_gnn_v1",
+        "total_points": 42,
+        "total_fuel_km": 36.62,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.186,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 36,
+        "total_fuel_km": 33.69,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 76,
+      "sub_seed": 15950263467445986384,
+      "reasoning": {
+        "success": true,
+        "latency_s": 50.8,
+        "total_points": 48,
+        "total_fuel_km": 21.19,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 40.87,
+        "total_points": 48,
+        "total_fuel_km": 21.19,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.003,
+        "total_points": 48,
+        "total_fuel_km": 21.19,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.046,
+        "model": "torch_gnn_v1",
+        "total_points": 48,
+        "total_fuel_km": 21.19,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.067,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 48,
+        "total_fuel_km": 21.73,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 77,
+      "sub_seed": 2734949432424485285,
+      "reasoning": {
+        "success": true,
+        "latency_s": 58.69,
+        "total_points": 33,
+        "total_fuel_km": 42.63,
+        "target_coverage": 0.4,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 39.59,
+        "total_points": 33,
+        "total_fuel_km": 42.63,
+        "target_coverage": 0.4,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.115,
+        "total_points": 31,
+        "total_fuel_km": 34.91,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.305,
+        "model": "torch_gnn_v1",
+        "total_points": 31,
+        "total_fuel_km": 34.91,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.207,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 19,
+        "total_fuel_km": 32.99,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 78,
+      "sub_seed": 11399805520031658636,
+      "reasoning": {
+        "success": true,
+        "latency_s": 42.27,
+        "total_points": 20,
+        "total_fuel_km": 19.84,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.37,
+        "total_points": 20,
+        "total_fuel_km": 19.84,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.01,
+        "total_points": 20,
+        "total_fuel_km": 19.84,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.032,
+        "model": "torch_gnn_v1",
+        "total_points": 20,
+        "total_fuel_km": 19.84,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.038,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 20,
+        "total_fuel_km": 19.84,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 79,
+      "sub_seed": 14099405264443842494,
+      "reasoning": {
+        "success": true,
+        "latency_s": 42.38,
+        "total_points": 6,
+        "total_fuel_km": 15.01,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.47,
+        "total_points": 6,
+        "total_fuel_km": 15.01,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.001,
+        "total_points": 6,
+        "total_fuel_km": 15.01,
+        "targets_visited": 2,
+        "targets_total": 15,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.013,
+        "model": "torch_gnn_v1",
+        "total_points": 6,
+        "total_fuel_km": 15.01,
+        "targets_visited": 2,
+        "targets_total": 15,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.019,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 6,
+        "total_fuel_km": 15.01,
+        "targets_visited": 2,
+        "targets_total": 15,
+        "target_coverage": 0.133,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 80,
+      "sub_seed": 16908345292819583641,
+      "reasoning": {
+        "success": true,
+        "latency_s": 45.09,
+        "total_points": 29,
+        "total_fuel_km": 30.24,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 32.87,
+        "total_points": 29,
+        "total_fuel_km": 30.24,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.011,
+        "total_points": 29,
+        "total_fuel_km": 30.24,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.073,
+        "model": "torch_gnn_v1",
+        "total_points": 29,
+        "total_fuel_km": 30.24,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.031,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 29,
+        "total_fuel_km": 30.24,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 81,
+      "sub_seed": 14953741996129146315,
+      "reasoning": {
+        "success": true,
+        "latency_s": 31.35,
+        "total_points": 55,
+        "total_fuel_km": 17.65,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 34.09,
+        "total_points": 55,
+        "total_fuel_km": 17.65,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.017,
+        "total_points": 55,
+        "total_fuel_km": 17.65,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.07,
+        "model": "torch_gnn_v1",
+        "total_points": 55,
+        "total_fuel_km": 17.65,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.071,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 55,
+        "total_fuel_km": 20.6,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 82,
+      "sub_seed": 1634406167288670570,
+      "reasoning": {
+        "success": true,
+        "latency_s": 44.87,
+        "total_points": 31,
+        "total_fuel_km": 38.21,
+        "target_coverage": 0.467,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 34.31,
+        "total_points": 31,
+        "total_fuel_km": 38.21,
+        "target_coverage": 0.467,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.056,
+        "total_points": 26,
+        "total_fuel_km": 31.27,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.201,
+        "model": "torch_gnn_v1",
+        "total_points": 26,
+        "total_fuel_km": 31.27,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.176,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 23,
+        "total_fuel_km": 30.13,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 83,
+      "sub_seed": 4039910288479084352,
+      "reasoning": {
+        "success": true,
+        "latency_s": 52.56,
+        "total_points": 27,
+        "total_fuel_km": 17.52,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 39.11,
+        "total_points": 27,
+        "total_fuel_km": 17.52,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.005,
+        "total_points": 27,
+        "total_fuel_km": 17.52,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.052,
+        "model": "torch_gnn_v1",
+        "total_points": 27,
+        "total_fuel_km": 17.52,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.019,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 27,
+        "total_fuel_km": 17.6,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 84,
+      "sub_seed": 11156929398455486688,
+      "reasoning": {
+        "success": true,
+        "latency_s": 40.03,
+        "total_points": 93,
+        "total_fuel_km": 42.6,
+        "target_coverage": 0.867,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 42.62,
+        "total_points": 93,
+        "total_fuel_km": 42.6,
+        "target_coverage": 0.867,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 1.418,
+        "total_points": 76,
+        "total_fuel_km": 24.19,
+        "targets_visited": 11,
+        "targets_total": 15,
+        "target_coverage": 0.733,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 4.901,
+        "model": "torch_gnn_v1",
+        "total_points": 76,
+        "total_fuel_km": 24.19,
+        "targets_visited": 11,
+        "targets_total": 15,
+        "target_coverage": 0.733,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.225,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 66,
+        "total_fuel_km": 21.09,
+        "targets_visited": 10,
+        "targets_total": 15,
+        "target_coverage": 0.667,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 85,
+      "sub_seed": 8894124149772859020,
+      "reasoning": {
+        "success": true,
+        "latency_s": 35.31,
+        "total_points": 31,
+        "total_fuel_km": 40.91,
+        "target_coverage": 0.533,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 38.29,
+        "total_points": 31,
+        "total_fuel_km": 40.91,
+        "target_coverage": 0.533,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.085,
+        "total_points": 24,
+        "total_fuel_km": 28.13,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.199,
+        "model": "torch_gnn_v1",
+        "total_points": 24,
+        "total_fuel_km": 28.13,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.181,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 24,
+        "total_fuel_km": 29.27,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 86,
+      "sub_seed": 1775120011345808055,
+      "reasoning": {
+        "success": true,
+        "latency_s": 46.55,
+        "total_points": 24,
+        "total_fuel_km": 17.54,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 39.38,
+        "total_points": 24,
+        "total_fuel_km": 17.54,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.001,
+        "total_points": 24,
+        "total_fuel_km": 17.54,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.02,
+        "model": "torch_gnn_v1",
+        "total_points": 24,
+        "total_fuel_km": 17.54,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.031,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 24,
+        "total_fuel_km": 17.54,
+        "targets_visited": 3,
+        "targets_total": 15,
+        "target_coverage": 0.2,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 87,
+      "sub_seed": 9924091003401632697,
+      "reasoning": {
+        "success": true,
+        "latency_s": 31.15,
+        "total_points": 65,
+        "total_fuel_km": 37.44,
+        "target_coverage": 0.867,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 49.57,
+        "total_points": 67,
+        "total_fuel_km": 37.44,
+        "target_coverage": 0.933,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 1.347,
+        "total_points": 61,
+        "total_fuel_km": 33.59,
+        "targets_visited": 12,
+        "targets_total": 15,
+        "target_coverage": 0.8,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 16.527,
+        "model": "torch_gnn_v1",
+        "total_points": 61,
+        "total_fuel_km": 33.59,
+        "targets_visited": 12,
+        "targets_total": 15,
+        "target_coverage": 0.8,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.169,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 59,
+        "total_fuel_km": 34.87,
+        "targets_visited": 11,
+        "targets_total": 15,
+        "target_coverage": 0.733,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 88,
+      "sub_seed": 4787284717589484153,
+      "reasoning": {
+        "success": true,
+        "latency_s": 37.68,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 35.87,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.001,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "targets_visited": 0,
+        "targets_total": 15,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.002,
+        "model": "torch_gnn_v1",
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "targets_visited": 0,
+        "targets_total": 15,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.004,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "targets_visited": 0,
+        "targets_total": 15,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "error": null
+      }
+    },
+    {
+      "run_index": 89,
+      "sub_seed": 12490406280993661760,
+      "reasoning": {
+        "success": true,
+        "latency_s": 58.65,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 41.8,
+        "total_points": 65,
+        "total_fuel_km": 43.01,
+        "target_coverage": 0.667,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.132,
+        "total_points": 42,
+        "total_fuel_km": 29.78,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.198,
+        "model": "torch_gnn_v1",
+        "total_points": 42,
+        "total_fuel_km": 29.78,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.068,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 29,
+        "total_fuel_km": 27.77,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 90,
+      "sub_seed": 14270752437688005376,
+      "reasoning": {
+        "success": true,
+        "latency_s": 56.68,
+        "total_points": 56,
+        "total_fuel_km": 30.72,
+        "target_coverage": 0.667,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.6,
+        "total_points": 56,
+        "total_fuel_km": 30.72,
+        "target_coverage": 0.667,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.13,
+        "total_points": 45,
+        "total_fuel_km": 23.84,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.184,
+        "model": "torch_gnn_v1",
+        "total_points": 45,
+        "total_fuel_km": 23.84,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.07,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 45,
+        "total_fuel_km": 23.84,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 91,
+      "sub_seed": 17912355891860928315,
+      "reasoning": {
+        "success": true,
+        "latency_s": 58.36,
+        "total_points": 26,
+        "total_fuel_km": 31.72,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.18,
+        "total_points": 26,
+        "total_fuel_km": 31.72,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.003,
+        "total_points": 26,
+        "total_fuel_km": 31.72,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.045,
+        "model": "torch_gnn_v1",
+        "total_points": 26,
+        "total_fuel_km": 31.72,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.073,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 26,
+        "total_fuel_km": 31.72,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 92,
+      "sub_seed": 8111943603364765274,
+      "reasoning": {
+        "success": true,
+        "latency_s": 42.97,
+        "total_points": 57,
+        "total_fuel_km": 46.45,
+        "target_coverage": 0.733,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 38.31,
+        "total_points": 57,
+        "total_fuel_km": 46.45,
+        "target_coverage": 0.733,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.423,
+        "total_points": 47,
+        "total_fuel_km": 27.84,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.49,
+        "model": "torch_gnn_v1",
+        "total_points": 47,
+        "total_fuel_km": 27.84,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.157,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 38,
+        "total_fuel_km": 20.82,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 93,
+      "sub_seed": 8562210765176162107,
+      "reasoning": {
+        "success": true,
+        "latency_s": 38.28,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 37.1,
+        "total_points": 54,
+        "total_fuel_km": 38.08,
+        "target_coverage": 0.733,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.4,
+        "total_points": 33,
+        "total_fuel_km": 20.8,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.485,
+        "model": "torch_gnn_v1",
+        "total_points": 33,
+        "total_fuel_km": 20.8,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.111,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 33,
+        "total_fuel_km": 21.21,
+        "targets_visited": 7,
+        "targets_total": 15,
+        "target_coverage": 0.467,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 94,
+      "sub_seed": 5050040901387556648,
+      "reasoning": {
+        "success": true,
+        "latency_s": 37.69,
+        "total_points": 57,
+        "total_fuel_km": 34.93,
+        "target_coverage": 0.667,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 36.26,
+        "total_points": 57,
+        "total_fuel_km": 34.93,
+        "target_coverage": 0.667,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.103,
+        "total_points": 51,
+        "total_fuel_km": 24.9,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.195,
+        "model": "torch_gnn_v1",
+        "total_points": 51,
+        "total_fuel_km": 24.9,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.12,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 51,
+        "total_fuel_km": 26.58,
+        "targets_visited": 8,
+        "targets_total": 15,
+        "target_coverage": 0.533,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 95,
+      "sub_seed": 11953308187771194499,
+      "reasoning": {
+        "success": true,
+        "latency_s": 53.45,
+        "total_points": 31,
+        "total_fuel_km": 27.97,
+        "target_coverage": 0.333,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 34.89,
+        "total_points": 31,
+        "total_fuel_km": 27.97,
+        "target_coverage": 0.333,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.008,
+        "total_points": 26,
+        "total_fuel_km": 16.34,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.049,
+        "model": "torch_gnn_v1",
+        "total_points": 26,
+        "total_fuel_km": 16.34,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.058,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 26,
+        "total_fuel_km": 16.34,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 96,
+      "sub_seed": 9956103355032822480,
+      "reasoning": {
+        "success": true,
+        "latency_s": 48.82,
+        "total_points": 29,
+        "total_fuel_km": 15.86,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 38.39,
+        "total_points": 29,
+        "total_fuel_km": 15.86,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.003,
+        "total_points": 29,
+        "total_fuel_km": 15.86,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.044,
+        "model": "torch_gnn_v1",
+        "total_points": 29,
+        "total_fuel_km": 15.86,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.066,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 29,
+        "total_fuel_km": 18.09,
+        "targets_visited": 6,
+        "targets_total": 15,
+        "target_coverage": 0.4,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 97,
+      "sub_seed": 11682581529489876086,
+      "reasoning": {
+        "success": true,
+        "latency_s": 49.57,
+        "total_points": 0,
+        "total_fuel_km": 0.0,
+        "target_coverage": 0.0,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 40.13,
+        "total_points": 65,
+        "total_fuel_km": 46.98,
+        "target_coverage": 0.8,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 1.418,
+        "total_points": 56,
+        "total_fuel_km": 35.26,
+        "targets_visited": 11,
+        "targets_total": 15,
+        "target_coverage": 0.733,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 1.5,
+        "model": "torch_gnn_v1",
+        "total_points": 56,
+        "total_fuel_km": 35.26,
+        "targets_visited": 11,
+        "targets_total": 15,
+        "target_coverage": 0.733,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.207,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 54,
+        "total_fuel_km": 35.43,
+        "targets_visited": 10,
+        "targets_total": 15,
+        "target_coverage": 0.667,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 98,
+      "sub_seed": 17730320491069733811,
+      "reasoning": {
+        "success": true,
+        "latency_s": 31.52,
+        "total_points": 52,
+        "total_fuel_km": 38.18,
+        "target_coverage": 0.6,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 38.64,
+        "total_points": 52,
+        "total_fuel_km": 38.18,
+        "target_coverage": 0.6,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.088,
+        "total_points": 33,
+        "total_fuel_km": 30.09,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.246,
+        "model": "torch_gnn_v1",
+        "total_points": 33,
+        "total_fuel_km": 30.09,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.186,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 33,
+        "total_fuel_km": 30.86,
+        "targets_visited": 5,
+        "targets_total": 15,
+        "target_coverage": 0.333,
+        "valid_solution": true,
+        "error": null
+      }
+    },
+    {
+      "run_index": 99,
+      "sub_seed": 11448182088018120182,
+      "reasoning": {
+        "success": true,
+        "latency_s": 53.03,
+        "total_points": 35,
+        "total_fuel_km": 35.85,
+        "target_coverage": 0.4,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "langgraph_v4": {
+        "success": true,
+        "latency_s": 31.04,
+        "total_points": 35,
+        "total_fuel_km": 35.85,
+        "target_coverage": 0.4,
+        "valid_solution": false,
+        "recorded": true
+      },
+      "solver_control": {
+        "success": true,
+        "latency_s": 0.077,
+        "total_points": 25,
+        "total_fuel_km": 20.63,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn": {
+        "success": true,
+        "latency_s": 0.2,
+        "model": "torch_gnn_v1",
+        "total_points": 25,
+        "total_fuel_km": 20.63,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      },
+      "gnn_decoder": {
+        "success": true,
+        "latency_s": 0.157,
+        "model": "torch_gnn_v1+torch_gnn_route_edge_v1",
+        "total_points": 25,
+        "total_fuel_km": 21.98,
+        "targets_visited": 4,
+        "targets_total": 15,
+        "target_coverage": 0.267,
+        "valid_solution": true,
+        "error": null
+      }
+    }
+  ]
+}

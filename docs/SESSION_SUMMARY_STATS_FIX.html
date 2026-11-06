@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Session Summary: Animation Stats Fix</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      line-height: 1.6;
+      color: #333;
+    }
+    h1 { color: #2563eb; border-bottom: 2px solid #2563eb; padding-bottom: 10px; }
+    h2 { color: #1e40af; margin-top: 30px; }
+    h3 { color: #3b82f6; }
+    table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f3f4f6; }
+    code { background-color: #f3f4f6; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+    pre { background-color: #1f2937; color: #f9fafb; padding: 15px; border-radius: 5px; overflow-x: auto; }
+    pre code { background: none; padding: 0; color: inherit; }
+    .metadata { color: #6b7280; margin-bottom: 30px; }
+    hr { border: none; border-top: 1px solid #e5e7eb; margin: 30px 0; }
+    .highlight { background-color: #fef3c7; padding: 2px 4px; }
+    @media print {
+      body { margin: 20px; }
+      pre { white-space: pre-wrap; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Session Summary: Animation Stats Fix</h1>
+
+  <div class="metadata">
+    <strong>Date:</strong> April 15, 2026<br>
+    <strong>Commit:</strong> 975a089<br>
+    <strong>Branch:</strong> main
+  </div>
+
+  <hr>
+
+  <h2>Problem Statement</h2>
+  <p>The mission stats panel showed different values after animation compared to after accepting a solve:</p>
+
+  <table>
+    <tr><th>Metric</th><th>After Solve</th><th>After Animate</th></tr>
+    <tr><td>D3 Fuel</td><td>207 / 250</td><td class="highlight">283 / 250 (OVER!)</td></tr>
+    <tr><td>Total Fuel</td><td>1051 / 1215</td><td class="highlight">1849 / 1215</td></tr>
+  </table>
+
+  <p>This caused confusion because:</p>
+  <ol>
+    <li>D3 appeared to be within budget after solve but over budget after animation</li>
+    <li>The total mission fuel jumped from 1051 to 1849 (798 unit difference)</li>
+  </ol>
+
+  <hr>
+
+  <h2>Root Cause Analysis</h2>
+
+  <h3>Two Different Distance Calculations</h3>
+  <p>The application had two functions calculating stats:</p>
+
+  <ol>
+    <li><strong><code>updateStatsFromRoutes()</code></strong> - Used after accepting a solve
+      <ul>
+        <li>Uses <code>routeInfo.distance</code> (solver's computed value)</li>
+        <li>Includes SAM-aware shortest path distances + loiter fuel</li>
+      </ul>
+    </li>
+    <li><strong><code>updateStatsFromAnimation()</code></strong> - Used during/after animation
+      <ul>
+        <li>Was using <code>droneState.distanceTraveled</code> (trajectory-based)</li>
+        <li>Calculated by walking through trajectory points</li>
+      </ul>
+    </li>
+  </ol>
+
+  <h3>Why They Differed</h3>
+  <p>The solver computes distances using a pre-calculated SAM-aware distance matrix. The animation, however, was calculating distance by summing up Euclidean distances between all trajectory points (which includes detailed SAM boundary-following paths).</p>
+
+  <pre><code>Solver Distance = Matrix-based shortest paths + loiter fuel
+Animation Distance = Sum of all trajectory segment lengths</code></pre>
+
+  <p>The trajectory includes many intermediate points for smooth SAM avoidance, making the animation distance longer than the solver's distance.</p>
+
+  <hr>
+
+  <h2>Solution</h2>
+  <p>Modified <code>updateStatsFromAnimation()</code> to use <code>routeInfo.distance</code> (the solver's value) instead of <code>droneState.distanceTraveled</code>:</p>
+
+  <h3>Changes Made</h3>
+  <p><strong>File:</strong> <code>webapp/isr.js</code></p>
+
+  <ol>
+    <li><strong>Individual drone display</strong> now uses <code>routeInfo.distance</code>:
+      <pre><code>const routeDistanceForDisplay = Number(routeInfo.distance || 0);
+setText(`stat-d${did}-fuel`, `${Math.round(routeDistanceForDisplay)} / ${Math.round(budget)}`);</code></pre>
+    </li>
+    <li><strong>Mission total</strong> now uses <code>routeInfo.distance</code>:
+      <pre><code>const routeDistance = Number(routeInfo.distance || 0);
+missionDistanceTraveled += routeDistance;</code></pre>
+    </li>
+    <li><strong>P/F ratio</strong> now uses consistent distance:
+      <pre><code>const pf = routeDistanceForDisplay > 0 ? points / routeDistanceForDisplay : 0;</code></pre>
+    </li>
+    <li><strong>Removed unused variables</strong> (<code>distanceTraveled</code>, <code>droneState</code> per drone)</li>
+  </ol>
+
+  <hr>
+
+  <h2>Additional Feature: Map View Export/Import</h2>
+  <p>Also implemented in this session:</p>
+  <p>When exporting an environment JSON, the map view is now saved:</p>
+  <pre><code>{
+  "map_view": {
+    "bounds": { "south": 37.70, "north": 37.85, "west": -122.51, "east": -122.36 },
+    "center": { "lat": 37.775, "lng": -122.435 },
+    "zoom": 13
+  }
+}</code></pre>
+  <p>When importing, <code>restoreMapView()</code> restores the geographic area so users see the same map location.</p>
+
+  <hr>
+
+  <h2>Testing</h2>
+  <p>After the fix:</p>
+  <ul>
+    <li><strong>After Solve:</strong> D3 = 207/250, Total = 1051/1215</li>
+    <li><strong>After Animate:</strong> D3 = 207/250, Total = 1051/1215 (now consistent!)</li>
+  </ul>
+
+  <hr>
+
+  <h2>Files Modified</h2>
+  <table>
+    <tr><th>File</th><th>Changes</th></tr>
+    <tr><td><code>webapp/isr.js</code></td><td>Fixed <code>updateStatsFromAnimation()</code>, added <code>restoreMapView()</code>, added map_view to exports</td></tr>
+  </table>
+
+  <hr>
+
+  <h2>Commit Details</h2>
+  <pre><code>fix: Animation stats now consistent with solver stats
+
+- Animation stats were showing different fuel values than solve stats
+- Root cause: animation used trajectory-based distanceTraveled while
+  solve stats used routeInfo.distance (solver's computed value)
+- Fixed updateStatsFromAnimation() to use routeInfo.distance consistently
+- Also added map view export/import (saves center lat/lng, zoom, bounds)
+- Added debug warning for distance mismatches in refueling drones
+
+Co-Authored-By: Claude Opus 4.5 &lt;noreply@anthropic.com&gt;</code></pre>
+
+</body>
+</html>

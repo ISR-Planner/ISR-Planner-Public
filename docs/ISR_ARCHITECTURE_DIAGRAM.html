@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>ISR Mission Planner - Architecture Diagram</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="" />
+  <style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+  pre, code { font-family: "SF Mono", Monaco, "Courier New", monospace; font-size: 11px; }
+  pre { background: #f5f5f5; padding: 15px; overflow-x: auto; border-radius: 5px; }
+  table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+  th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+  th { background: #f0f0f0; }
+  h1, h2, h3 { color: #333; }
+  @media print { body { font-size: 10px; } pre { font-size: 9px; } }
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">ISR Mission Planner - Architecture Diagram</h1>
+</header>
+<h1 id="isr-mission-planner---architecture-diagram">ISR Mission Planner
+- Architecture Diagram</h1>
+<h2 id="high-level-system-architecture">High-Level System
+Architecture</h2>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│                              FRONTEND (Browser)                              │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                    webapp/isr.js (9,959 lines)                        │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │  │
+│  │  │   Canvas    │  │   Mission   │  │  Segment    │  │  Animation  │  │  │
+│  │  │  Rendering  │  │   Control   │  │  Manager    │  │   Engine    │  │  │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘  │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │  │
+│  │  │   State     │  │    API      │  │   Edit      │  │    I/O      │  │  │
+│  │  │  Machine    │  │   Client    │  │   Mode      │  │  (Import/   │  │  │
+│  │  │             │  │             │  │             │  │   Export)   │  │  │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘  │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+│                                      │                                       │
+│              webapp/segment_v2/      │      webapp/index.html                │
+│              (Segmented Missions)    │      webapp/isr.css                   │
+└──────────────────────────────────────┼───────────────────────────────────────┘
+                                       │ HTTP/JSON
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         BACKEND (FastAPI Server)                             │
+│                        server/main.py (2,352 lines)                          │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                           API ENDPOINTS                                │  │
+│  │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────────┐ │  │
+│  │  │ /api/solve       │  │ /api/agents/     │  │ /api/insert_missed   │ │  │
+│  │  │ /api/solve_with_ │  │   chat-v4        │  │ /api/trajectory_swap │ │  │
+│  │  │   allocation     │  │                  │  │ /api/crossing_removal│ │  │
+│  │  └────────┬─────────┘  └────────┬─────────┘  └──────────┬───────────┘ │  │
+│  │           │                     │                       │             │  │
+│  │           │          ┌──────────┴──────────┐            │             │  │
+│  │           │          │   MISSION_STORE     │            │             │  │
+│  │           │          │  (In-Memory State)  │            │             │  │
+│  │           │          └─────────────────────┘            │             │  │
+│  └───────────┼─────────────────────┼──────────────────────┼─────────────┘  │
+└──────────────┼─────────────────────┼──────────────────────┼─────────────────┘
+               │                     │                      │
+       ┌───────┴───────┐    ┌────────┴────────┐    ┌───────┴───────┐
+       ▼               ▼    ▼                 │    ▼               │
+┌─────────────────────────────────────────────┼────────────────────┼──────────┐
+│                  AGENT SYSTEM (LangGraph v4)                     │          │
+│          server/agents/isr_agent_multi_v4.py (3,031 lines)       │          │
+│  ┌──────────────────────────────────────────────────────────┐    │          │
+│  │              COORDINATOR V4 (Deterministic Pre-pass)     │    │          │
+│  │         server/agents/coordinator_v4.py                  │    │          │
+│  │  ┌────────────────┐  ┌────────────────┐  ┌────────────┐  │    │          │
+│  │  │Intent Classify │  │  Environment   │  │   Policy   │  │    │          │
+│  │  │plan/replan/    │  │  Validation    │  │  Injection │  │    │          │
+│  │  │explain/what_if │  │                │  │            │  │    │          │
+│  │  └────────────────┘  └────────────────┘  └────────────┘  │    │          │
+│  └──────────────────────────────┬───────────────────────────┘    │          │
+│                                 ▼                                │          │
+│  ┌──────────────────────────────────────────────────────────┐    │          │
+│  │              LANGGRAPH STATE MACHINE                     │    │          │
+│  │                                                          │    │          │
+│  │   ┌────────────┐    ┌────────────┐    ┌──────────────┐   │    │          │
+│  │   │ STRATEGIST │───▶│ ALLOCATOR  │───▶│    ROUTE     │   │    │          │
+│  │   │   (LLM)    │    │   (LLM)    │    │  OPTIMIZER   │   │    │          │
+│  │   └────────────┘    └────────────┘    │(Algorithmic) │   │    │          │
+│  │                                       └──────┬───────┘   │    │          │
+│  │                                              │           │    │          │
+│  │   ┌────────────┐    ┌────────────┐           │           │    │          │
+│  │   │ RESPONDER  │◀───│   CRITIC   │◀──────────┘           │    │          │
+│  │   │   (LLM)    │    │   (LLM)    │                       │    │          │
+│  │   └────────────┘    └────────────┘                       │    │          │
+│  └──────────────────────────────────────────────────────────┘    │          │
+│                                 │                                │          │
+│  ┌──────────────────────────────┴───────────────────────────┐    │          │
+│  │           MISSION ORCHESTRATION TOOLS                     │    │          │
+│  │      server/agents/mission_orchestration_tools.py         │    │          │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────────────┐  │    │          │
+│  │  │ Inspection  │ │   Solving   │ │    Optimization     │  │    │          │
+│  │  │   Tools     │ │   Tools     │ │       Tools         │  │    │          │
+│  │  └─────────────┘ └──────┬──────┘ └──────────┬──────────┘  │    │          │
+│  └─────────────────────────┼───────────────────┼─────────────┘    │          │
+└────────────────────────────┼───────────────────┼─────────────────┼──────────┘
+                             │                   │                 │
+                             ▼                   ▼                 ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           SOLVER PIPELINE                                    │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                    SOLVER BRIDGE (Orchestrator)                        │  │
+│  │               server/solver/solver_bridge.py (1,087 lines)             │  │
+│  └───────────────────────────────┬───────────────────────────────────────┘  │
+│                                  │                                          │
+│          ┌───────────────────────┼───────────────────────┐                  │
+│          ▼                       ▼                       ▼                  │
+│  ┌───────────────┐    ┌───────────────────┐    ┌───────────────────┐       │
+│  │    TARGET     │    │  SAM DISTANCE     │    │    TRAJECTORY     │       │
+│  │   ALLOCATOR   │    │     MATRIX        │    │     PLANNER       │       │
+│  │  (911 lines)  │    │   (SAM-aware      │    │  (SAM boundary    │       │
+│  │               │    │    distances)     │    │   navigation)     │       │
+│  │ 5 Strategies: │    │                   │    │                   │       │
+│  │ - efficient   │    │ sam_distance_     │    │ trajectory_       │       │
+│  │ - greedy      │    │   matrix.py       │    │   planner.py      │       │
+│  │ - balanced    │    │                   │    │                   │       │
+│  │ - geographic  │    │                   │    │                   │       │
+│  │ - exclusive   │    │                   │    │                   │       │
+│  └───────┬───────┘    └─────────┬─────────┘    └─────────┬─────────┘       │
+│          │                      │                        │                  │
+│          └──────────────────────┼────────────────────────┘                  │
+│                                 ▼                                           │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                    ORIENTEERING SOLVER (Core Algorithm)                │  │
+│  │               orienteering_with_matrix.py (436 lines) - ROOT LEVEL     │  │
+│  │  ┌─────────────────────────────────────────────────────────────────┐   │  │
+│  │  │                 Held-Karp Dynamic Programming                    │   │  │
+│  │  │  • held_karp_cycle() - Shortest TSP cycle                       │   │  │
+│  │  │  • held_karp_path()  - Shortest Hamiltonian path                │   │  │
+│  │  │  • orienteering()    - Max profit under distance constraint     │   │  │
+│  │  └─────────────────────────────────────────────────────────────────┘   │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+│                                 │                                           │
+│                                 ▼                                           │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                    POST-OPTIMIZER                                      │  │
+│  │               server/solver/post_optimizer.py (2,078 lines)            │  │
+│  │  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────────────┐   │  │
+│  │  │  Insert Missed  │ │   Swap Closer   │ │   Crossing Removal      │   │  │
+│  │  │    Targets      │ │                 │ │       (2-opt)           │   │  │
+│  │  └─────────────────┘ └─────────────────┘ └─────────────────────────┘   │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                       │
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           DATABASE (Optional)                                │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                 server/database/mission_ledger.py                      │  │
+│  │                 server/database/supabase_client.py                     │  │
+│  │  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────────────┐   │  │
+│  │  │  agent_runs     │ │  agent_traces   │ │  agent_optimizer_steps  │   │  │
+│  │  │  (Decision log) │ │  (Full traces)  │ │  (Optimization history) │   │  │
+│  │  └─────────────────┘ └─────────────────┘ └─────────────────────────┘   │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+│                    (Falls back to in-memory if Supabase not configured)      │
+└─────────────────────────────────────────────────────────────────────────────┘</code></pre>
+<h2 id="data-flow-mission-planning-request">Data Flow: Mission Planning
+Request</h2>
+<pre><code>┌──────────────────────────────────────────────────────────────────────────────┐
+│                           USER REQUEST FLOW                                   │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+    User clicks &quot;Run Planner&quot; or sends chat message
+                          │
+                          ▼
+    ┌─────────────────────────────────────────┐
+    │         webapp/isr.js                   │
+    │  runPlanner() or runAgentPlanner()      │
+    └─────────────────┬───────────────────────┘
+                      │
+         POST /api/solve_with_allocation
+              or POST /api/agents/chat-v4
+                      │
+                      ▼
+    ┌─────────────────────────────────────────┐
+    │         server/main.py                  │
+    │  Route to appropriate handler           │
+    └─────────────────┬───────────────────────┘
+                      │
+          ┌───────────┴───────────┐
+          ▼                       ▼
+    ┌───────────────┐     ┌───────────────────┐
+    │ Direct Solve  │     │  Agent Planning   │
+    │   (Fast)      │     │  (Reasoning-based)│
+    └───────┬───────┘     └─────────┬─────────┘
+            │                       │
+            │                       ▼
+            │             ┌─────────────────────────────┐
+            │             │ Coordinator V4              │
+            │             │ • Classify intent           │
+            │             │ • Validate environment      │
+            │             │ • Inject policy decisions   │
+            │             └───────────┬─────────────────┘
+            │                         │
+            │                         ▼
+            │             ┌─────────────────────────────┐
+            │             │ LangGraph State Machine     │
+            │             │ STRATEGIST → ALLOCATOR →    │
+            │             │ ROUTE_OPTIMIZER → CRITIC →  │
+            │             │ RESPONDER                   │
+            │             └───────────┬─────────────────┘
+            │                         │
+            └────────────┬────────────┘
+                         ▼
+    ┌─────────────────────────────────────────┐
+    │         SOLVER PIPELINE                 │
+    │                                         │
+    │  1. Calculate SAM-aware distance matrix │
+    │  2. Allocate targets to drones          │
+    │  3. Solve orienteering per drone        │
+    │  4. Plan SAM-avoiding trajectories      │
+    │  5. Post-optimize (Insert/Swap/NoCross) │
+    └─────────────────┬───────────────────────┘
+                      │
+                      ▼
+    ┌─────────────────────────────────────────┐
+    │         RESPONSE                        │
+    │  • routes: {drone_id: route_data}       │
+    │  • trajectories: {drone_id: [points]}   │
+    │  • allocation: {drone_id: [targets]}    │
+    │  • final_response: reasoning (agents)   │
+    └─────────────────┬───────────────────────┘
+                      │
+                      ▼
+    ┌─────────────────────────────────────────┐
+    │         webapp/isr.js                   │
+    │  • Update state.routes                  │
+    │  • Render canvas                        │
+    │  • Display stats &amp; allocation           │
+    └─────────────────────────────────────────┘</code></pre>
+<h2 id="segmented-mission-system">Segmented Mission System</h2>
+<pre><code>┌──────────────────────────────────────────────────────────────────────────────┐
+│                    CHECKPOINT-BASED REPLANNING                                │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+    Mission animating...
+            │
+            ▼
+    User clicks &quot;Cut&quot; at checkpoint
+            │
+            ▼
+    ┌─────────────────────────────────────────┐
+    │  freezeAtCheckpoint()                   │
+    │  • Capture drone positions              │
+    │  • Record fuel remaining                │
+    │  • Mark visited targets                 │
+    └─────────────────┬───────────────────────┘
+                      │
+                      ▼
+    ┌─────────────────────────────────────────┐
+    │  Build Segment from frozen routes       │
+    │  Segment {                              │
+    │    index: 0,                            │
+    │    solution: {routes up to cut},        │
+    │    cutDistance: distance_at_cut,        │
+    │    cutPositions: {drone: [x,y]}         │
+    │  }                                      │
+    └─────────────────┬───────────────────────┘
+                      │
+                      ▼
+    ┌─────────────────────────────────────────┐
+    │  Replan remaining mission               │
+    │  POST /api/solve_with_allocation        │
+    │  • Filter out visited targets           │
+    │  • Set synthetic_starts to cut positions│
+    │  • Return new routes for remainder      │
+    └─────────────────┬───────────────────────┘
+                      │
+                      ▼
+    ┌─────────────────────────────────────────┐
+    │  Build Segment from new solution        │
+    │  Segment {                              │
+    │    index: 1,                            │
+    │    solution: {new routes},              │
+    │    ...                                  │
+    │  }                                      │
+    └─────────────────┬───────────────────────┘
+                      │
+                      ▼
+    ┌─────────────────────────────────────────┐
+    │  committedSegments = [Segment0, Segment1]│
+    │  Continue animation from Segment 1      │
+    └─────────────────────────────────────────┘</code></pre>
+<h2 id="file-organization-summary">File Organization Summary</h2>
+<pre><code>isr-planner/
+├── orienteering_with_matrix.py          # Core Held-Karp solver (ROOT LEVEL!)
+├── run_planner.sh                        # Startup script
+├── .env                                  # Environment variables
+│
+├── server/
+│   ├── main.py                          # FastAPI app + ALL endpoints (2,352 lines)
+│   │
+│   ├── agents/
+│   │   ├── isr_agent_multi_v4.py        # ACTIVE v4 agent (3,031 lines)
+│   │   ├── coordinator_v4.py            # Deterministic pre-pass
+│   │   ├── mission_orchestration_tools.py # Agent-accessible tools
+│   │   ├── mission_tools.py             # Mission analysis helpers
+│   │   └── versions/                    # Legacy agents (v1, v2, v3)
+│   │
+│   ├── solver/
+│   │   ├── solver_bridge.py             # Main orchestrator (1,087 lines)
+│   │   ├── target_allocator.py          # 5 allocation strategies (911 lines)
+│   │   ├── post_optimizer.py            # Insert/Swap/NoCross (2,078 lines)
+│   │   ├── sam_distance_matrix.py       # SAM-aware distances
+│   │   └── trajectory_planner.py        # SAM boundary navigation
+│   │
+│   ├── database/
+│   │   ├── mission_ledger.py            # Decision trace tables
+│   │   └── supabase_client.py           # Database connection
+│   │
+│   └── memory/
+│       ├── constraints/                 # Constraint parsing
+│       └── sessions/                    # Session state
+│
+├── webapp/
+│   ├── index.html                       # Main HTML
+│   ├── isr.js                           # MONOLITHIC frontend (9,959 lines)
+│   ├── isr.css                          # Styling
+│   └── segment_v2/                      # Segmented mission system
+│       ├── Segment.js
+│       ├── SegmentBuilder.js
+│       └── MissionReplay.js
+│
+└── docs/
+    ├── SYSTEM_ARCHITECTURE.md           # Segment system design
+    ├── AGENTIC_SYSTEM_DESCRIPTION.md    # v4 agent architecture
+    └── MODULAR_ARCHITECTURE.md          # Planned refactoring</code></pre>
+<h2 id="key-technologies">Key Technologies</h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Technology</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Frontend</td>
+<td>Vanilla JavaScript, HTML5 Canvas</td>
+</tr>
+<tr>
+<td>Backend</td>
+<td>Python FastAPI</td>
+</tr>
+<tr>
+<td>Agent Framework</td>
+<td>LangGraph v4</td>
+</tr>
+<tr>
+<td>AI Model</td>
+<td>Claude (Anthropic)</td>
+</tr>
+<tr>
+<td>Solver Algorithm</td>
+<td>Held-Karp Dynamic Programming</td>
+</tr>
+<tr>
+<td>Database (Optional)</td>
+<td>Supabase (PostgreSQL)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="pdf-generation-plan">PDF Generation Plan</h2>
+<p>To generate a PDF of this architecture diagram:</p>
+<ol type="1">
+<li><p><strong>Install pandoc</strong> (if not already installed):</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install pandoc</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install <span class="at">--cask</span> basictex  <span class="co"># For PDF output via LaTeX</span></span></code></pre></div></li>
+<li><p><strong>Generate PDF</strong>:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> /Users/kamalali/.claude/plans/snoopy-juggling-kurzweil.md <span class="dt">\</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-o</span> /Users/kamalali/isr-planner/isr-planner/docs/ISR_ARCHITECTURE_DIAGRAM.pdf <span class="dt">\</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--pdf-engine</span><span class="op">=</span>pdflatex <span class="dt">\</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-V</span> geometry:margin=1in <span class="dt">\</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">-V</span> monofont=<span class="st">&quot;Courier New&quot;</span></span></code></pre></div>
+<p>Alternative (without LaTeX):</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> /Users/kamalali/.claude/plans/snoopy-juggling-kurzweil.md <span class="dt">\</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-o</span> /Users/kamalali/isr-planner/isr-planner/docs/ISR_ARCHITECTURE_DIAGRAM.html</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Then print to PDF from browser</span></span></code></pre></div></li>
+</ol>
+<p><strong>Output location</strong>:
+<code>docs/ISR_ARCHITECTURE_DIAGRAM.pdf</code></p>
+</body>
+</html>

@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ISR Web Editor + Planner</title>
+  <link rel="stylesheet" href="/static/isr.css?v=20261012-100x-boost" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cesium.com/downloads/cesiumjs/releases/1.118/Build/Cesium/Widgets/widgets.css" />
+</head>
+<body>
+  <div id="app-root">
+    <!-- Top bar -->
+    <header class="top-bar">
+      <div class="top-title">ISR Planner · Weather Preview</div>
+      <div class="top-env">
+        Env file:
+        <span id="env-filename" class="env-filename">[unsaved]</span>
+      </div>
+      <button id="btn-settings" class="settings-btn" title="AI Settings">&#9881;</button>
+    </header>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>AI Configuration</h3>
+          <button id="btn-close-settings" class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="settings-info">
+            Your API key is stored only in your browser (localStorage).
+          </div>
+
+          <div class="settings-form">
+            <div class="form-group">
+              <label for="llm-provider">Provider</label>
+              <select id="llm-provider" class="settings-select">
+                <option value="">Loading...</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="ollama-host-group" style="display:none;">
+              <label for="ollama-host">Ollama Host</label>
+              <input type="text" id="ollama-host" class="settings-input" placeholder="http://localhost:11434" />
+              <div class="field-hint">Local server — no API key needed. Pull models with <code>ollama pull llama3.1</code>.</div>
+            </div>
+
+            <div class="form-group">
+              <label for="llm-model">
+                Model
+                <button id="btn-refresh-ollama" class="small-btn" type="button" style="display:none;">Refresh models</button>
+              </label>
+              <select id="llm-model" class="settings-select">
+                <option value="">Select a provider first</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="api-key-group">
+              <label>Credentials</label>
+              <div class="field-hint">
+                API keys are loaded by the server from environment variables and
+                are never entered or stored in this browser.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <button id="btn-test-connection" class="primary-btn">Test Connection</button>
+              <span id="connection-status" class="connection-status"></span>
+            </div>
+          </div>
+
+          <div id="provider-status" class="provider-status">
+            <!-- Will be populated dynamically -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-save-settings" class="primary-btn">Save Settings</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main 2-column layout -->
+    <main class="main-layout">
+      <!-- LEFT COLUMN: Canvas + sequence + edit toolbar placeholder -->
+      <section class="left-panel">
+        <!-- Canvas / environment -->
+        <div class="canvas-card">
+          <div class="card-header">
+            <span>Mission Map</span>
+            <div style="display:flex;gap:4px;align-items:center;">
+              <button id="btn-view-grid" class="small-btn active">Grid</button>
+              <button id="btn-view-map" class="small-btn">Map</button>
+              <button id="btn-view-3d" class="small-btn" title="3D mission view (read-only, orbit camera)">3D</button>
+              <button id="btn-reset-view" class="small-btn" title="Reset zoom and pan (double-click canvas)">⟲</button>
+              <select id="map-tile-select" class="compact-select" style="display:none;font-size:11px;">
+                <option value="street">Street</option>
+                <option value="satellite">Satellite</option>
+              </select>
+              <button id="btn-cancel-solve" class="small-btn" style="background:#dc3545;color:white;display:none;">Cancel Solve</button>
+            </div>
+          </div>
+          <div id="cesium-controls" style="display:none;gap:6px;align-items:center;flex-wrap:wrap;padding:4px 0;font-size:11px;">
+            <span style="color:#9ca3af;">Camera:</span>
+            <button id="cesium-view-top" class="small-btn">Top-down</button>
+            <button id="cesium-view-side" class="small-btn">Side</button>
+            <button id="cesium-view-oblique" class="small-btn">Oblique</button>
+            <button id="cesium-view-reset" class="small-btn">Reset</button>
+            <span style="color:#9ca3af;margin-left:8px;">Follow:</span>
+            <select id="cesium-follow-drone" class="compact-select" style="font-size:11px;">
+              <option value="">None</option>
+            </select>
+            <span style="color:#9ca3af;margin-left:8px;">Behind (m):</span>
+            <input type="number" id="cesium-chase-back-m" class="compact-select" style="width:60px;font-size:11px;" min="10" max="5000" step="10" value="300" title="Chase-cam distance behind the drone, in meters." />
+            <span style="color:#9ca3af;">Above (m):</span>
+            <input type="number" id="cesium-chase-up-m" class="compact-select" style="width:60px;font-size:11px;" min="0" max="3000" step="10" value="150" title="Chase-cam height above the drone, in meters." />
+            <span style="color:#9ca3af;">Turn (s):</span>
+            <input type="number" id="cesium-chase-smooth-s" class="compact-select" style="width:50px;font-size:11px;" min="0" max="5" step="0.1" value="0.6" title="How gradually the chase-cam swings when the drone turns (seconds; 0 = instant)." />
+          </div>
+          <div style="display:flex;position:relative;">
+            <canvas id="env-canvas" width="800" height="800"></canvas>
+            <div id="map-legend" class="map-legend" title="Target categories. Click to show or hide the names."></div>
+            <div id="target-hover" class="target-hover" hidden></div>
+            <div id="cesium-container" style="display:none;width:800px;height:800px;"></div>
+            <!-- Zoom slider (vertical, on right side) -->
+            <div id="zoom-slider-container" style="display:flex;flex-direction:column;align-items:center;padding:4px 8px;gap:4px;">
+              <span style="font-size:10px;color:#9ca3af;">+</span>
+              <input type="range" id="zoom-slider" min="10" max="18" step="1" value="13"
+                style="writing-mode:vertical-lr;direction:rtl;height:150px;width:20px;cursor:pointer;">
+              <span style="font-size:10px;color:#9ca3af;">−</span>
+              <span id="zoom-level" style="font-size:10px;color:#6b7280;margin-top:4px;">z13</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sequence toolbar (top row; edit controls moved to the Edit panel below) -->
+        <div class="unified-toolbar-card">
+          <div class="unified-toolbar">
+            <button id="sequence-apply-btn" class="small-btn secondary-btn">Apply</button>
+            <select id="sequence-drone-select" class="compact-select">
+              <option value="1">D1</option>
+              <option value="2">D2</option>
+              <option value="3">D3</option>
+              <option value="4">D4</option>
+              <option value="5">D5</option>
+            </select>
+            <input id="sequence-input" type="text" placeholder="A1,T1,T2,A1" spellcheck="false" />
+          </div>
+        </div>
+
+        <!-- Mission Control + Edit (side-by-side) -->
+        <div class="control-row">
+          <!-- Mission Control Panel: Plan -> Review -> Fly (updateMissionControlState) -->
+          <div id="mission-control" class="mission-control-panel">
+            <div class="mc-header">
+              <span class="mc-title">Mission Control</span>
+              <span class="mc-header-gap"></span>
+              <span id="mc-mission-status" class="mc-mission-status" title="Mission status"></span>
+              <span id="mc-segment-info" class="mc-segment-info">Segment 1</span>
+            </div>
+            <input type="text" id="mc-mission-name" class="mc-mission-name"
+                   placeholder="Mission name / number…" title="Name this mission" />
+            <div class="mc-steps">
+              <div class="mc-step" id="mc-step-plan">
+                <div class="mc-step-title"><b>1</b>Plan</div>
+                <div class="mc-step-btns">
+                  <button id="mc-run-planner" class="mc-btn mc-btn-primary">Run Planner</button>
+                </div>
+              </div>
+              <div class="mc-step" id="mc-step-review">
+                <div class="mc-step-title"><b>2</b>Review</div>
+                <div class="mc-step-btns">
+                  <button id="mc-accept" class="mc-btn mc-btn-success" disabled>✓ Accept</button>
+                  <button id="mc-discard" class="mc-btn mc-btn-danger" disabled>Discard</button>
+                </div>
+              </div>
+              <div class="mc-step mc-step-fly" id="mc-step-fly">
+                <div class="mc-step-title"><b>3</b>Fly</div>
+                <div class="mc-step-btns">
+                  <div class="mc-fly-row">
+                    <button id="mc-animate" class="mc-btn mc-btn-play" disabled title="Flies the drones ticked under Anim in the Env tab">▶ Animate</button>
+                    <button id="mc-stop" class="mc-btn mc-btn-quiet" disabled title="Stop the animation (Animate then starts from the beginning)">■ Stop</button>
+                    <button id="mc-reset" class="mc-btn mc-btn-quiet" disabled title="Back to the start of the mission">↺ Reset</button>
+                  </div>
+                  <div class="mc-fly-options">
+                    <div class="mc-speed-control" title="Animation speed">
+                      <input type="range" id="mc-speed-slider" min="0" max="9" step="1" value="2" title="Animation speed: ¼× to 128× (each step doubles)">
+                      <span id="mc-speed-label">1x</span>
+                    </div>
+                    <div class="mc-boost-control" title="Multiply playback speed by the selected boost, up to 12,800×. Aircraft and weather stay synchronized.">
+                      <label class="mc-replay-mode"><input type="checkbox" id="mc-speed-boost"> Boost</label>
+                      <select id="mc-speed-boost-factor" aria-label="Playback boost">
+                        <option value="10">10×</option>
+                        <option value="100" selected>100×</option>
+                      </select>
+                    </div>
+                    <label class="mc-replay-mode" title="Replay each cut segment: fly the original solve, stop at each cut, then load that segment's environment and replan">
+                      <input type="checkbox" id="mc-replay-segments"> Replay segments
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mc-status">
+              <span id="mc-status-text">Ready - Load an environment to begin</span>
+              <span id="mc-sync-status" class="mc-sync-status" hidden></span>
+              <span class="mc-header-gap"></span>
+              <button id="mc-end-mission" class="mc-end-link" hidden
+                      title="End this mission (it is kept; a new solve starts a new one)">End mission</button>
+            </div>
+          </div>
+
+          <!-- Edit Panel: On/Off switch, tools, the chosen tool's options -->
+          <div id="edit-panel" class="edit-panel">
+            <div class="mc-header">
+              <span class="mc-title">Edit</span>
+              <span class="mc-header-gap"></span>
+              <button id="btn-toggle-edit" class="edit-switch" role="switch" aria-checked="false"
+                      title="Edit on: change the map. Turning it off keeps your changes.">
+                <span class="sw-off">Off</span><span class="sw-on">On</span>
+              </button>
+            </div>
+            <div class="edit-tools">
+              <button id="btn-add-target" class="edit-tool" title="Place targets"><span class="edit-ic ic-target"></span>Target</button>
+              <button id="btn-add-airport" class="edit-tool" title="Place airports"><span class="edit-ic ic-airport"></span>Airport</button>
+              <button id="btn-add-tanker" class="edit-tool" title="Place tankers (mid-air refuel points)"><span class="edit-ic ic-tanker"></span>Tanker</button>
+              <button id="btn-add-sam" class="edit-tool" title="Place SAMs"><span class="edit-ic ic-sam"></span>SAM</button>
+              <button id="btn-delete-selected" class="edit-tool edit-tool-del" title="Delete the selected item"><span class="edit-ic ic-del">✕</span>Delete</button>
+            </div>
+            <div class="edit-options">
+              <div class="edit-opt edit-opt-target">
+                <label>Priority
+                  <select id="new-target-priority" class="compact-select">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5" selected>5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                  </select>
+                </label>
+                <label>Category
+                  <select id="new-target-type" class="compact-select"></select>
+                </label>
+              </div>
+              <div class="edit-opt edit-opt-airport">
+                <label>Runway
+                  <select id="new-airport-runway" class="compact-select">
+                    <option value="L" selected>L (long)</option>
+                    <option value="M">M (medium)</option>
+                    <option value="S">S (short)</option>
+                  </select>
+                </label>
+              </div>
+              <div class="edit-opt edit-opt-tanker">
+                <label>Altitude
+                  <input id="tanker-alt" type="number" min="0" step="0.1" value="4" class="compact-select tanker-alt-input" title="Tanker altitude (km above sea level). With a tanker selected: that tanker's altitude. Otherwise: the altitude for the next tanker you place." /> km
+                </label>
+              </div>
+              <div class="edit-opt edit-opt-sam">
+                <label>Range
+                  <select id="new-sam-range" class="compact-select">
+                    <option value="1">1</option>
+                    <option value="2" selected>2</option>
+                    <option value="3">3</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                  </select> km
+                </label>
+              </div>
+              <div id="edit-hint" class="edit-hint"></div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- RIGHT COLUMN: Tabbed interface -->
+      <aside class="right-panel">
+        <!-- Tab buttons -->
+        <div class="tab-bar">
+          <button class="tab-btn active" data-tab="env">Env</button>
+          <button class="tab-btn" data-tab="loiter">Assets</button>
+          <button class="tab-btn" data-tab="debug">Debug</button>
+          <button class="tab-btn" data-tab="agents">Agents</button>
+          <button class="tab-btn" data-tab="agents-trace">Trace</button>
+          <button class="tab-btn" data-tab="gnn">GNN</button>
+          <button class="tab-btn" data-tab="compare">Compare</button>
+        </div>
+
+        <!-- Tab content container -->
+        <div class="tab-content">
+          <!-- ENV TAB (Combined Stats + Config + Controls) -->
+          <section class="tab-pane active" id="tab-env">
+
+          <section id="weather-preview-box" class="section-box">
+<div class="card-header"><span>Weather</span><span style="font-size:11px;color:#94a3b8">International SIGMET · Preview</span></div>
+<div style="padding:8px;display:grid;gap:6px;font-size:12px">
+<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><label for="wp-data-source">Source</label><select id="wp-data-source" class="config-select" style="flex:1;min-width:125px"><option value="live">Live NOAA</option><option value="recorded">Recorded demo</option></select><button id="wp-load-demo" type="button" class="small-btn">Load demo</button><button id="wp-save-demo" type="button" class="small-btn" disabled>Save demo</button><input id="wp-demo-file" type="file" accept=".json,application/json" hidden></div>
+<div id="wp-source-mode" style="color:#94a3b8">Live NOAA · latest available weather</div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;color:#94a3b8"><span id="wp-area">Current Map view</span><button id="wp-fit" class="small-btn" type="button">Fit mission</button></div>
+<div class="wp-time-fields" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:8px;min-width:0">
+<div style="min-width:0"><label for="wp-start">Start</label><div class="wp-date-field"><span id="wp-start-display" class="wp-date-display"></span><input id="wp-start" type="datetime-local" value="2026-10-11T12:00" aria-label="Mission start"><button type="button" class="wp-calendar" data-picker="wp-start" aria-label="Open start calendar">▼</button></div></div>
+<div style="min-width:0"><label for="wp-end">End</label><div class="wp-date-field"><span id="wp-end-display" class="wp-date-display"></span><input id="wp-end" type="datetime-local" value="2026-10-11T21:00" aria-label="Mission end"><button type="button" class="wp-calendar" data-picker="wp-end" aria-label="Open end calendar">▼</button></div></div>
+<div style="display:flex;flex-direction:column;gap:3px;min-width:0"><label for="wp-zone" style="color:#94a3b8">Time zone</label><select id="wp-zone" class="config-select" style="width:100%;max-width:115px;height:31px;padding:3px 7px"><option value="UTC" selected>UTC</option><option value="America/Chicago">Central Time</option><option value="America/New_York">Eastern Time</option><option value="America/Denver">Mountain Time</option><option value="America/Los_Angeles">Pacific Time</option></select></div>
+</div>
+<div id="wp-window-error" role="alert" style="color:#fca5a5" hidden></div>
+<style>
+.wp-date-field{position:relative;display:flex;align-items:center;background:#111827;border:1px solid #334155;color-scheme:dark;margin-top:3px;min-width:0}
+.wp-date-field input{position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none}.wp-date-display{padding:6px;min-width:0;flex:1;white-space:nowrap;font-variant-numeric:tabular-nums}.wp-date-field .wp-calendar{position:relative;z-index:1}
+.wp-date-field input::-webkit-calendar-picker-indicator{display:none}
+.wp-date-field .wp-calendar{background:transparent;color:#cbd5e1;border:0;padding:6px 7px;cursor:pointer;flex-shrink:0;font-size:11px}
+@media(max-width:1050px){.wp-time-fields{grid-template-columns:1fr!important}}
+</style>
+
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button id="wp-get" class="primary-btn" type="button" style="flex:1;min-width:125px">Get forecast</button><label style="display:flex;align-items:center;gap:4px;white-space:nowrap"><input id="wp-no-fly" type="checkbox" checked> No fly</label><label style="display:flex;align-items:center;gap:4px;white-space:nowrap"><input id="wp-other" type="checkbox" checked> Other advisories</label></div>
+
+<label style="display:flex;gap:4px;align-items:center;color:#94a3b8"><input id="wp-auto-checkpoint" type="checkbox" checked> Weather checkpoints</label><div id="wp-checkpoint-status" role="status" style="color:#f8fafc"></div><div id="wp-solve-mode" role="status" style="color:#94a3b8">Planning without weather</div><div id="wp-flight-window" hidden style="color:#fcd34d"><span id="wp-flight-warning"></span> <button id="wp-use-eta" class="small-btn" type="button">Use flight ETA</button></div><div id="wp-status" role="status">Frame the mission area in Map, then get forecast.</div>
+<div id="wp-timeline" hidden style="padding:5px 0;font-size:12px"><div style="display:flex;justify-content:space-between;color:#94a3b8"><span>Weather time · extra planning range</span><label style="display:flex;gap:4px;align-items:center"><input id="wp-follow" type="checkbox" checked> Follow mission</label></div><div id="wp-at" style="margin:3px 0"></div><input id="wp-time" aria-label="Forecast preview time" type="range" min="0" max="3" value="0" style="width:100%"><div style="display:flex;justify-content:space-between;color:#94a3b8;gap:8px"><span id="wp-time-start"></span><span id="wp-time-end"></span></div><div id="wp-coverage" role="status" style="color:#94a3b8;margin-top:4px"></div></div><details id="wp-more"><summary style="cursor:pointer;color:#94a3b8">Details</summary><p id="wp-source" style="margin:8px 0;color:#94a3b8">Get forecast retrieves current NOAA advisories. International SIGMETs; G-AIRMETs cover the US only. Coverage gaps do not mean clear weather. Loaded No fly polygons constrain planning with a 5 km margin.</p><div id="wp-cells" style="display:grid;gap:5px"></div><div id="wp-detail"></div></details>
+</div></section>
+
+          <!-- Section 1: Allocation -->
+          <div class="section-box env-edit-gated" title="Enable Edit to modify">
+          <div class="card-header">
+            <span>Allocation</span>
+          </div>
+          <div class="strategy-controls env-strategy-row">
+            <select id="allocation-strategy" class="config-select">
+              <option value="geographic" selected>Geographic (Nearest Airport)</option>
+              <option value="insertion">Insertion (Min Fuel)</option>
+              <option value="efficient">Best value (priority ÷ km)</option>
+              <option value="greedy">Greedy (Fast)</option>
+              <option value="balanced">Balanced (Equal Load)</option>
+              <option value="exclusive">Exclusive (Unique First)</option>
+            </select>
+            <span id="allocation-badge" class="allocation-badge" hidden></span>
+          </div>
+          <!-- Cruise altitude and climb angle are per drone (Asset tab). -->
+          </div>
+
+          <!-- Section 2: Drones (stats, allocation, display, animation) -->
+          <div class="section-box">
+          <div class="card-header env-drones-header">
+            <span>Drones</span>
+            <label class="env-inline-check"><input type="checkbox" id="chk-show-targets" checked /> Show targets</label>
+          </div>
+          <table class="drone-table">
+            <thead>
+              <tr><th>Drone</th><th>Show</th><th>Anim</th><th title="Targets">Tgts</th><th title="Points">Pts</th><th title="Fuel used / range (one bar section per tank)">Fuel / range</th><th>P/F</th></tr>
+            </thead>
+            <tbody>
+                <tr class="drone-row" id="drone-row-d1" data-drone="1">
+                  <td><span class="drone-caret"></span><span class="drone-dot drone-dot-d1"></span>D1</td>
+                  <td><input type="checkbox" id="traj-d1" title="Draw D1's trajectory" /></td>
+                  <td><input type="checkbox" id="anim-d1" checked title="Fly D1 when you press Animate" /></td>
+                  <td id="stat-d1-targets">0</td>
+                  <td id="stat-d1-points">0</td>
+                  <td id="stat-d1-fuel">0 / 0</td>
+                  <td id="stat-d1-pf">0.00</td>
+                </tr>
+                <tr class="drone-detail" id="drone-detail-d1" hidden>
+                  <td colspan="7"><div id="drone-targets-d1" class="drone-targets"></div><div id="drone-legs-d1" class="drone-legs"></div></td>
+                </tr>
+                <tr class="drone-row" id="drone-row-d2" data-drone="2">
+                  <td><span class="drone-caret"></span><span class="drone-dot drone-dot-d2"></span>D2</td>
+                  <td><input type="checkbox" id="traj-d2" title="Draw D2's trajectory" /></td>
+                  <td><input type="checkbox" id="anim-d2" checked title="Fly D2 when you press Animate" /></td>
+                  <td id="stat-d2-targets">0</td>
+                  <td id="stat-d2-points">0</td>
+                  <td id="stat-d2-fuel">0 / 0</td>
+                  <td id="stat-d2-pf">0.00</td>
+                </tr>
+                <tr class="drone-detail" id="drone-detail-d2" hidden>
+                  <td colspan="7"><div id="drone-targets-d2" class="drone-targets"></div><div id="drone-legs-d2" class="drone-legs"></div></td>
+                </tr>
+                <tr class="drone-row" id="drone-row-d3" data-drone="3">
+                  <td><span class="drone-caret"></span><span class="drone-dot drone-dot-d3"></span>D3</td>
+                  <td><input type="checkbox" id="traj-d3" title="Draw D3's trajectory" /></td>
+                  <td><input type="checkbox" id="anim-d3" checked title="Fly D3 when you press Animate" /></td>
+                  <td id="stat-d3-targets">0</td>
+                  <td id="stat-d3-points">0</td>
+                  <td id="stat-d3-fuel">0 / 0</td>
+                  <td id="stat-d3-pf">0.00</td>
+                </tr>
+                <tr class="drone-detail" id="drone-detail-d3" hidden>
+                  <td colspan="7"><div id="drone-targets-d3" class="drone-targets"></div><div id="drone-legs-d3" class="drone-legs"></div></td>
+                </tr>
+                <tr class="drone-row" id="drone-row-d4" data-drone="4">
+                  <td><span class="drone-caret"></span><span class="drone-dot drone-dot-d4"></span>D4</td>
+                  <td><input type="checkbox" id="traj-d4" title="Draw D4's trajectory" /></td>
+                  <td><input type="checkbox" id="anim-d4" checked title="Fly D4 when you press Animate" /></td>
+                  <td id="stat-d4-targets">0</td>
+                  <td id="stat-d4-points">0</td>
+                  <td id="stat-d4-fuel">0 / 0</td>
+                  <td id="stat-d4-pf">0.00</td>
+                </tr>
+                <tr class="drone-detail" id="drone-detail-d4" hidden>
+                  <td colspan="7"><div id="drone-targets-d4" class="drone-targets"></div><div id="drone-legs-d4" class="drone-legs"></div></td>
+                </tr>
+                <tr class="drone-row" id="drone-row-d5" data-drone="5">
+                  <td><span class="drone-caret"></span><span class="drone-dot drone-dot-d5"></span>D5</td>
+                  <td><input type="checkbox" id="traj-d5" title="Draw D5's trajectory" /></td>
+                  <td><input type="checkbox" id="anim-d5" checked title="Fly D5 when you press Animate" /></td>
+                  <td id="stat-d5-targets">0</td>
+                  <td id="stat-d5-points">0</td>
+                  <td id="stat-d5-fuel">0 / 0</td>
+                  <td id="stat-d5-pf">0.00</td>
+                </tr>
+                <tr class="drone-detail" id="drone-detail-d5" hidden>
+                  <td colspan="7"><div id="drone-targets-d5" class="drone-targets"></div><div id="drone-legs-d5" class="drone-legs"></div></td>
+                </tr>
+                <tr class="drone-total" id="stat-mission">
+                  <td>Mission</td><td></td><td></td>
+                  <td id="stat-mission-targets">0</td>
+                  <td id="stat-mission-points">0</td>
+                  <td id="stat-mission-fuel">0 / 0</td>
+                  <td id="stat-mission-pf">0.00</td>
+                </tr>
+            </tbody>
+          </table>
+          <div class="drone-actions">
+            <button id="traj-all" class="secondary-btn">Show all</button>
+            <span class="drone-actions-hint">Anim: the drones Mission Control's ▶ Animate flies</span>
+          </div>
+          </div>
+
+          <!-- Section 3: Optimization -->
+          <div class="section-box mission-busy-gated" title="Disabled while a mission is running">
+          <div class="card-header">
+            <span>Post-Optimization</span>
+          </div>
+          <div class="optimization-controls">
+            <div class="opt-btn-row">
+              <button id="btn-optimize-insert" class="secondary-btn" title="Insert unvisited targets into routes with leftover fuel">Insert</button>
+              <button id="btn-optimize-swap-until" class="secondary-btn" title="Swap targets between drones for shorter routes">Swap</button>
+              <button id="btn-optimize-cross" class="secondary-btn" title="Remove self-crossings from trajectories using 2-opt">No Cross</button>
+              <button id="btn-optimize-oropt" class="secondary-btn" title="Or-opt: relocate small groups of adjacent targets to better drones/legs">Or-Opt</button>
+            </div>
+            <label class="env-inline-check" style="margin-top:0.4rem" title="Automatically run INSERT → SWAP → No-Cross after every solve">
+              <input type="checkbox" id="chk-auto-optimize" checked /> Auto Optimize after Solve
+            </label>
+          </div>
+          </div>
+
+          <!-- Section 4: Import/Export -->
+          <div class="section-box mission-busy-gated" title="Disabled while a mission is running">
+          <div class="card-header">
+            <span>Import / Export</span>
+          </div>
+          <div class="io-row env-io-row">
+            <button id="btn-import" class="anim-go-btn" title="Opens an environment or a mission file (it tells them apart)">Import…</button>
+            <span class="drone-actions-gap"></span>
+            <button id="btn-export" class="secondary-btn">Export environment</button>
+            <button id="btn-export-mission" class="secondary-btn" title="The mission's segments, plus its environment as a second file">Export mission</button>
+            <input
+              id="file-input"
+              type="file"
+              accept=".json,application/json"
+              style="display:none"
+            />
+          </div>
+          </div>
+
+          </section>
+
+          <!-- CONTROL TAB (Drone Configuration + Loiter Configuration) -->
+          <section class="tab-pane" id="tab-loiter">
+          <!-- Target categories: what each target letter means (isr.js renderCategoriesTable) -->
+          <div class="section-box env-edit-gated" id="target-categories-box" title="Enable Edit to modify">
+            <div class="card-header">
+              <span>Target categories</span>
+              <button type="button" class="cat-fold" id="cat-fold" title="Show or hide the categories">▾ hide</button>
+            </div>
+            <div id="cat-body">
+              <table class="cat-table">
+                <thead><tr><th></th><th>Name</th><th>Examples</th><th class="cat-count">On map</th><th></th></tr></thead>
+                <tbody id="cat-table-body"></tbody>
+              </table>
+              <div class="cat-actions">
+                <button type="button" class="secondary-btn" id="cat-add">+ Add category</button>
+                <span class="fleet-hint" id="cat-note">Sensor figures per category come from the catalog ("nominal").</span>
+              </div>
+            </div>
+            <div id="cat-folded" class="cat-folded" hidden></div>
+          </div>
+
+          <!-- Drones: fleet table + one drawer per drone (docs: Asset tab layout C).
+               Every input keeps its id from the old layout. -->
+          <div class="section-box env-edit-gated" title="Enable Edit to modify">
+            <div class="card-header">
+              <span>Drones</span>
+              <span class="fleet-tools">
+                <span class="fleet-hint">▸ opens a drone's settings</span>
+                <button type="button" id="btn-collapse-drones" class="link-btn" hidden>Collapse all</button>
+              </span>
+            </div>
+            <table class="fleet-table">
+              <thead>
+                <tr><th>Drone</th><th>On</th><th title="Aircraft type from the catalog (nominal values). Custom = set every value yourself.">Type</th><th>Start</th><th>End</th><th>Fuel</th><th>Alt km</th><th></th></tr>
+              </thead>
+              <tbody>
+              <tr class="fleet-row" data-drone-id="1">
+                <td class="fleet-name"><span class="drone-dot" style="background:#3b82f6"></span>D1</td>
+                <td><input type="checkbox" id="cfg-d1-enabled" checked title="D1 takes part in the mission" /></td>
+                <td><select id="cfg-d1-platform" class="config-select" title="D1 aircraft type (catalog, nominal values). Custom = set every value yourself."><option value="">Custom</option></select></td>
+                <td><select id="cfg-d1-start" class="config-select" title="D1 start airport"></select></td>
+                <td><select id="cfg-d1-end" class="config-select" title="D1 landing airport"></select></td>
+                <td><input id="cfg-d1-fuel" type="number" min="0" value="150" class="config-input" title="D1 fuel (km)" /></td>
+                <td><input id="cfg-d1-alt" type="number" min="0" step="0.1" value="0" class="config-input" data-drone-alt="1" title="D1 cruise altitude (km above sea level). 0 = ground level: SAMs at full size." /></td>
+                <td><button type="button" class="fleet-toggle" data-drone-toggle="1" aria-expanded="false" aria-controls="drawer-d1" title="D1: other settings">▸</button></td>
+              </tr>
+              <tr class="fleet-drawer" id="drawer-d1" hidden>
+                <td colspan="8">
+                  <div class="drawer-group">
+                    <div class="drawer-title">Flight</div>
+                    <div class="drawer-fields">
+                      <label class="drawer-field"><span>Runway needed</span>
+                        <select id="cfg-d1-runway" class="config-select" title="Shortest runway D1 can use (L/M/S). Start, end and refuel airports must have at least this runway.">
+                          <option value="L">L</option>
+                          <option value="M">M</option>
+                          <option value="S" selected>S</option>
+                        </select></label>
+                      <label class="drawer-field"><span>Speed km/h</span>
+                        <input id="cfg-d1-speed" type="number" min="1" step="1" value="60" class="config-input" title="Cruise speed (km/h)" /></label>
+                      <label class="drawer-field"><span>Alt km</span>
+                        <input id="cfg-d1-alt2" type="number" min="0" step="0.1" value="0" class="config-input" data-drone-alt="1" title="Same value as Alt in the table" /></label>
+                      <label class="drawer-field"><span>Climb °</span>
+                        <input id="cfg-d1-climb" type="number" min="1" max="89" step="1" value="12" class="config-input" title="D1 climb angle (degrees)" /></label>
+                      <label class="drawer-field"><span>Descent °</span>
+                        <input id="cfg-d1-descent" type="number" min="1" max="89" step="1" value="12" class="config-input" title="D1 descent angle (degrees)" /></label>
+                    </div>
+                  </div>
+                  <div class="drawer-group">
+                    <div class="drawer-title" title="Sensors on board. Per target category the drone uses its best sensor (largest detection radius, its loiter time); a category none of them sees is not visited.">Sensors</div>
+                    <div class="sensor-chips" id="sensor-chips-d1"></div>
+                  </div>
+                  <div class="drawer-group">
+                    <div class="drawer-title" title="Target categories D1 may visit, how close it must pass (Detect km) and how long it stays (Loiter min). Set by its sensors; editable.">Target categories</div>
+                    <div class="cat-rows" id="cat-rows-d1"></div>
+                  </div>
+                  <div class="drawer-group">
+                    <div class="drawer-title" title="Airports/tankers D1 MAY refuel at; the planner decides whether and when. Greyed = runway too short. Max = cap on refuels.">May refuel at</div>
+                    <div class="refuel-chips" id="refuel-chips-d1"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="fleet-row" data-drone-id="2">
+                <td class="fleet-name"><span class="drone-dot" style="background:#f97316"></span>D2</td>
+                <td><input type="checkbox" id="cfg-d2-enabled" checked title="D2 takes part in the mission" /></td>
+                <td><select id="cfg-d2-platform" class="config-select" title="D2 aircraft type (catalog, nominal values). Custom = set every value yourself."><option value="">Custom</option></select></td>
+                <td><select id="cfg-d2-start" class="config-select" title="D2 start airport"></select></td>
+                <td><select id="cfg-d2-end" class="config-select" title="D2 landing airport"></select></td>
+                <td><input id="cfg-d2-fuel" type="number" min="0" value="150" class="config-input" title="D2 fuel (km)" /></td>
+                <td><input id="cfg-d2-alt" type="number" min="0" step="0.1" value="0" class="config-input" data-drone-alt="2" title="D2 cruise altitude (km above sea level). 0 = ground level: SAMs at full size." /></td>
+                <td><button type="button" class="fleet-toggle" data-drone-toggle="2" aria-expanded="false" aria-controls="drawer-d2" title="D2: other settings">▸</button></td>
+              </tr>
+              <tr class="fleet-drawer" id="drawer-d2" hidden>
+                <td colspan="8">
+                  <div class="drawer-group">
+                    <div class="drawer-title">Flight</div>
+                    <div class="drawer-fields">
+                      <label class="drawer-field"><span>Runway needed</span>
+                        <select id="cfg-d2-runway" class="config-select" title="Shortest runway D2 can use (L/M/S). Start, end and refuel airports must have at least this runway.">
+                          <option value="L">L</option>
+                          <option value="M">M</option>
+                          <option value="S" selected>S</option>
+                        </select></label>
+                      <label class="drawer-field"><span>Speed km/h</span>
+                        <input id="cfg-d2-speed" type="number" min="1" step="1" value="60" class="config-input" title="Cruise speed (km/h)" /></label>
+                      <label class="drawer-field"><span>Alt km</span>
+                        <input id="cfg-d2-alt2" type="number" min="0" step="0.1" value="0" class="config-input" data-drone-alt="2" title="Same value as Alt in the table" /></label>
+                      <label class="drawer-field"><span>Climb °</span>
+                        <input id="cfg-d2-climb" type="number" min="1" max="89" step="1" value="12" class="config-input" title="D2 climb angle (degrees)" /></label>
+                      <label class="drawer-field"><span>Descent °</span>
+                        <input id="cfg-d2-descent" type="number" min="1" max="89" step="1" value="12" class="config-input" title="D2 descent angle (degrees)" /></label>
+                    </div>
+                  </div>
+                  <div class="drawer-group">
+                    <div class="drawer-title" title="Sensors on board. Per target category the drone uses its best sensor (largest detection radius, its loiter time); a category none of them sees is not visited.">Sensors</div>
+                    <div class="sensor-chips" id="sensor-chips-d2"></div>
+                  </div>
+                  <div class="drawer-group">
+                    <div class="drawer-title" title="Target categories D2 may visit, how close it must pass (Detect km) and how long it stays (Loiter min). Set by its sensors; editable.">Target categories</div>
+                    <div class="cat-rows" id="cat-rows-d2"></div>
+                  </div>
+                  <div class="drawer-group">
+                    <div class="drawer-title" title="Airports/tankers D2 MAY refuel at; the planner decides whether and when. Greyed = runway too short. Max = cap on refuels.">May refuel at</div>
+                    <div class="refuel-chips" id="refuel-chips-d2"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="fleet-row" data-drone-id="3">
+                <td class="fleet-name"><span class="drone-dot" style="background:#22c55e"></span>D3</td>
+                <td><input type="checkbox" id="cfg-d3-enabled" checked title="D3 takes part in the mission" /></td>
+                <td><select id="cfg-d3-platform" class="config-select" title="D3 aircraft type (catalog, nominal values). Custom = set every value yourself."><option value="">Custom</option></select></td>
+                <td><select id="cfg-d3-start" class="config-select" title="D3 start airport"></select></td>
+                <td><select id="cfg-d3-end" class="config-select" title="D3 landing airport"></select></td>
+                <td><input id="cfg-d3-fuel" type="number" min="0" value="150" class="config-input" title="D3 fuel (km)" /></td>
+                <td><input id="cfg-d3-alt" type="number" min="0" step="0.1" value="0" class="config-input" data-drone-alt="3" title="D3 cruise altitude (km above sea level). 0 = ground level: SAMs at full size." /></td>
+                <td><button type="button" class="fleet-toggle" data-drone-toggle="3" aria-expanded="false" aria-controls="drawer-d3" title="D3: other settings">▸</button></td>
+              </tr>
+              <tr class="fleet-drawer" id="drawer-d3" hidden>
+                <td colspan="8">
+                  <div class="drawer-group">
+                    <div class="drawer-title">Flight</div>
+                    <div class="drawer-fields">
+                      <label class="drawer-field"><span>Runway needed</span>
+                        <select id="cfg-d3-runway" class="config-select" title="Shortest runway D3 can use (L/M/S). Start, end and refuel airports must have at least this runway.">
+                          <option value="L">L</option>
+                          <option value="M">M</option>
+                          <option value="S" selected>S</option>
+                        </select></label>
+                      <label class="drawer-field"><span>Speed km/h</span>
+                        <input id="cfg-d3-speed" type="number" min="1" step="1" value="60" class="config-input" title="Cruise speed (km/h)" /></label>
+                      <label class="drawer-field"><span>Alt km</span>
+                        <input id="cfg-d3-alt2" type="number" min="0" step="0.1" value="0" class="config-input" data-drone-alt="3" title="Same value as Alt in the table" /></label>
+                      <label class="drawer-field"><span>Climb °</span>
+                        <input id="cfg-d3-climb" type="number" min="1" max="89" step="1" value="12" class="config-input" title="D3 climb angle (degrees)" /></label>
+                      <label class="drawer-field"><span>Descent °</span>
+                        <input id="cfg-d3-descent" type="number" min="1" max="89" step="1" value="12" class="config-input" title="D3 descent angle (degrees)" /></label>
+                    </div>
+                  </div>
+                  <div class="drawer-group">
+                    <div class="drawer-title" title="Sensors on board. Per target category the drone uses its best sensor (largest detection radius, its loiter time); a category none of them sees is not visited.">Sensors</div>
+                    <div class="sensor-chips" id="sensor-chips-d3"></div>
+                  </div>
+                  <div class="drawer-group">
+                    <div class="drawer-title" title="Target categories D3 may visit, how close it must pass (Detect km) and how long it stays (Loiter min). Set by its sensors; editable.">Target categories</div>
+                    <div class="cat-rows" id="cat-rows-d3"></div>
+                  </div>
+                  <div class="drawer-group">
+                    <div class="drawer-title" title="Airports/tankers D3 MAY refuel at; the planner decides whether and when. Greyed = runway too short. Max = cap on refuels.">May refuel at</div>
+                    <div class="refuel-chips" id="refuel-chips-d3"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="fleet-row" data-drone-id="4">
+                <td class="fleet-name"><span class="drone-dot" style="background:#ef4444"></span>D4</td>
+                <td><input type="checkbox" id="cfg-d4-enabled" checked title="D4 takes part in the mission" /></td>
+                <td><select id="cfg-d4-platform" class="config-select" title="D4 aircraft type (catalog, nominal values). Custom = set every value yourself."><option value="">Custom</option></select></td>
+                <td><select id="cfg-d4-start" class="config-select" title="D4 start airport"></select></td>
+                <td><select id="cfg-d4-end" class="config-select" title="D4 landing airport"></select></td>
+                <td><input id="cfg-d4-fuel" type="number" min="0" value="150" class="config-input" title="D4 fuel (km)" /></td>
+                <td><input id="cfg-d4-alt" type="number" min="0" step="0.1" value="0" class="config-input" data-drone-alt="4" title="D4 cruise altitude (km above sea level). 0 = ground level: SAMs at full size." /></td>
+                <td><button type="button" class="fleet-toggle" data-drone-toggle="4" aria-expanded="false" aria-controls="drawer-d4" title="D4: other settings">▸</button></td>
+              </tr>
+              <tr class="fleet-drawer" id="drawer-d4" hidden>
+                <td colspan="8">
+                  <div class="drawer-group">
+                    <div class="drawer-title">Flight</div>
+                    <div class="drawer-fields">
+                      <label class="drawer-field"><span>Runway needed</span>
+                        <select id="cfg-d4-runway" class="config-select" title="Shortest runway D4 can use (L/M/S). Start, end and refuel airports must have at least this runway.">
+                          <option value="L">L</option>
+                          <option value="M">M</option>
+                          <option value="S" selected>S</option>
+                        </select></label>
+                      <label class="drawer-field"><span>Speed km/h</span>
+                        <input id="cfg-d4-speed" type="number" min="1" step="1" value="60" class="config-input" title="Cruise speed (km/h)" /></label>
+                      <label class="drawer-field"><span>Alt km</span>
+                        <input id="cfg-d4-alt2" type="number" min="0" step="0.1" value="0" class="config-input" data-drone-alt="4" title="Same value as Alt in the table" /></label>
+                      <label class="drawer-field"><span>Climb °</span>
+                        <input id="cfg-d4-climb" type="number" min="1" max="89" step="1" value="12" class="config-input" title="D4 climb angle (degrees)" /></label>
+                      <label class="drawer-field"><span>Descent °</span>
+                        <input id="cfg-d4-descent" type="number" min="1" max="89" step="1" value="12" class="config-input" title="D4 descent angle (degrees)" /></label>
+                    </div>
+                  </div>
+                  <div class="drawer-group">
+                    <div class="drawer-title" title="Sensors on board. Per target category the drone uses its best sensor (largest detection radius, its loiter time); a category none of them sees is not visited.">Sensors</div>
+                    <div class="sensor-chips" id="sensor-chips-d4"></div>
+                  </div>
+                  <div class="drawer-group">
+                    <div class="drawer-title" title="Target categories D4 may visit, how close it must pass (Detect km) and how long it stays (Loiter min). Set by its sensors; editable.">Target categories</div>
+                    <div class="cat-rows" id="cat-rows-d4"></div>
+                  </div>
+                  <div class="drawer-group">
+                    <div class="drawer-title" title="Airports/tankers D4 MAY refuel at; the planner decides whether and when. Greyed = runway too short. Max = cap on refuels.">May refuel at</div>
+                    <div class="refuel-chips" id="refuel-chips-d4"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="fleet-row" data-drone-id="5">
+                <td class="fleet-name"><span class="drone-dot" style="background:#a855f7"></span>D5</td>
+                <td><input type="checkbox" id="cfg-d5-enabled" checked title="D5 takes part in the mission" /></td>
+                <td><select id="cfg-d5-platform" class="config-select" title="D5 aircraft type (catalog, nominal values). Custom = set every value yourself."><option value="">Custom</option></select></td>
+                <td><select id="cfg-d5-start" class="config-select" title="D5 start airport"></select></td>
+                <td><select id="cfg-d5-end" class="config-select" title="D5 landing airport"></select></td>
+                <td><input id="cfg-d5-fuel" type="number" min="0" value="150" class="config-input" title="D5 fuel (km)" /></td>
+                <td><input id="cfg-d5-alt" type="number" min="0" step="0.1" value="0" class="config-input" data-drone-alt="5" title="D5 cruise altitude (km above sea level). 0 = ground level: SAMs at full size." /></td>
+                <td><button type="button" class="fleet-toggle" data-drone-toggle="5" aria-expanded="false" aria-controls="drawer-d5" title="D5: other settings">▸</button></td>
+              </tr>
+              <tr class="fleet-drawer" id="drawer-d5" hidden>
+                <td colspan="8">
+                  <div class="drawer-group">
+                    <div class="drawer-title">Flight</div>
+                    <div class="drawer-fields">
+                      <label class="drawer-field"><span>Runway needed</span>
+                        <select id="cfg-d5-runway" class="config-select" title="Shortest runway D5 can use (L/M/S). Start, end and refuel airports must have at least this runway.">
+                          <option value="L">L</option>
+                          <option value="M">M</option>
+                          <option value="S" selected>S</option>
+                        </select></label>
+                      <label class="drawer-field"><span>Speed km/h</span>
+                        <input id="cfg-d5-speed" type="number" min="1" step="1" value="60" class="config-input" title="Cruise speed (km/h)" /></label>
+                      <label class="drawer-field"><span>Alt km</span>
+                        <input id="cfg-d5-alt2" type="number" min="0" step="0.1" value="0" class="config-input" data-drone-alt="5" title="Same value as Alt in the table" /></label>
+                      <label class="drawer-field"><span>Climb °</span>
+                        <input id="cfg-d5-climb" type="number" min="1" max="89" step="1" value="12" class="config-input" title="D5 climb angle (degrees)" /></label>
+                      <label class="drawer-field"><span>Descent °</span>
+                        <input id="cfg-d5-descent" type="number" min="1" max="89" step="1" value="12" class="config-input" title="D5 descent angle (degrees)" /></label>
+                    </div>
+                  </div>
+                  <div class="drawer-group">
+                    <div class="drawer-title" title="Sensors on board. Per target category the drone uses its best sensor (largest detection radius, its loiter time); a category none of them sees is not visited.">Sensors</div>
+                    <div class="sensor-chips" id="sensor-chips-d5"></div>
+                  </div>
+                  <div class="drawer-group">
+                    <div class="drawer-title" title="Target categories D5 may visit, how close it must pass (Detect km) and how long it stays (Loiter min). Set by its sensors; editable.">Target categories</div>
+                    <div class="cat-rows" id="cat-rows-d5"></div>
+                  </div>
+                  <div class="drawer-group">
+                    <div class="drawer-title" title="Airports/tankers D5 MAY refuel at; the planner decides whether and when. Greyed = runway too short. Max = cap on refuels.">May refuel at</div>
+                    <div class="refuel-chips" id="refuel-chips-d5"></div>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Tankers: holding altitude + clearance above the terrain under them -->
+          <div class="section-box env-edit-gated" title="Enable Edit to modify">
+            <div class="card-header" title="A tanker holds the altitude you give it. Above ground = altitude minus the terrain under it; amber under the terrain margin, red below ground.">
+              <span>Tankers</span>
+              <span class="fleet-hint" id="tanker-margin-note"></span>
+            </div>
+            <div id="tanker-table"></div>
+          </div>
+
+          <!-- Time-on-Target Synchronization -->
+          <div class="section-box env-edit-gated" title="Enable Edit to modify">
+            <div class="card-header" title="Leave rows unchecked to synchronize first target arrivals">
+              <span>Time-on-Target Sync (ToT)</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap; font-size:0.78rem;">
+              <label style="display:flex; align-items:center; gap:0.35rem;">
+                <input type="checkbox" id="chk-time-sync" />
+                Sync
+              </label>
+              <label style="display:flex; align-items:center; gap:0.35rem;">
+                Tolerance
+                <input id="time-sync-tolerance" type="number" min="0" step="0.5" value="1" class="config-input" style="width:3rem;" />
+              </label>
+              <label style="display:flex; align-items:center; gap:0.35rem;">
+                Strategy
+                <select id="time-sync-strategy" class="config-select" style="width:6.5rem;">
+                  <option value="launch_delay" selected>Launch delay</option>
+                  <option value="hover_wait">Hover wait</option>
+                </select>
+              </label>
+            </div>
+            <div id="time-sync-members" style="display:grid; grid-template-columns: repeat(5, 1fr); gap:0.35rem; margin-top:0.45rem; font-size:0.72rem;"></div>
+          </div>
+
+          </section>
+
+          <!-- DEBUG TAB -->
+          <section class="tab-pane" id="tab-debug">
+          <div class="card-header">
+            <span>Debug Output</span>
+          </div>
+
+          <div class="debug-section">
+            <div class="debug-title">Log:</div>
+            <pre id="debug-output" class="debug-output">// Waiting for planner...</pre>
+          </div>
+          </section>
+
+          <!-- AGENTS TAB -->
+          <section class="tab-pane" id="tab-agents">
+          <div class="card-header">
+            <span>ISR Mission Planner Agent</span>
+            <div class="agent-header-buttons">
+              <button id="agent-import-btn" class="small-btn">Import</button>
+              <button id="agent-export-btn" class="small-btn">Export</button>
+            </div>
+          </div>
+          <div class="agent-chat-container">
+            <!-- Input area (at top) -->
+            <div class="agent-input-area">
+              <div class="agent-input-row">
+                <textarea id="agent-input" class="agent-input" placeholder="Type your question, or click the mic to speak..." rows="2"></textarea>
+                <button id="btn-agent-mic" class="mic-btn" type="button" title="Dictate with your voice" aria-label="Dictate with your voice">🎤</button>
+              </div>
+              <div class="agent-controls">
+                <label class="reasoning-toggle" title="Read the agent's replies aloud (neural voice, loads on first use)">
+                  <input type="checkbox" id="speak-replies-toggle">
+                  <span>🔊 Speak replies</span>
+                </label>
+                <select id="tts-engine" class="tts-engine-select" title="Voice engine">
+                  <option value="kokoro">Kokoro</option>
+                </select>
+                <button id="btn-send-agent" class="primary-btn">Send</button>
+              </div>
+            </div>
+            <div id="agent-status" class="agent-status" aria-live="polite"></div>
+            <!-- Chat history (scrollable, below input) -->
+            <div id="agent-chat-history" class="agent-chat-history">
+              <div class="agent-message system-message">
+                Ask me to plan routes, like: "Plan a mission for all drones" or "What targets can D2 visit?"
+              </div>
+            </div>
+            <!-- Memory Management Section -->
+            <div class="agent-memory-section">
+              <div class="memory-header">
+                <span class="memory-title">Agent Memory (<span id="memory-count">0</span>)</span>
+                <button id="btn-toggle-memory" class="small-btn">Show</button>
+                <button id="btn-clear-memory" class="small-btn danger-btn">Clear All</button>
+              </div>
+              <div id="memory-panel" class="memory-panel" style="display: none;">
+                <div class="memory-add-form">
+                  <select id="memory-category">
+                    <option value="correction">Correction</option>
+                    <option value="instruction">Instruction</option>
+                    <option value="preference">Preference</option>
+                    <option value="fact">Fact</option>
+                  </select>
+                  <input type="text" id="memory-input" placeholder="Add a memory (e.g., 'Always start routes from A1')">
+                  <button id="btn-add-memory" class="small-btn">Add</button>
+                </div>
+                <div id="memory-list" class="memory-list"></div>
+              </div>
+            </div>
+          </div>
+          </section>
+
+          <!-- AGENT COMPARISON TAB -->
+          <section class="tab-pane" id="tab-compare">
+            <div class="card-header">
+              <span>Agent Comparison</span>
+              <button id="btn-run-compare" class="primary-btn">Run Comparison</button>
+            </div>
+            <div class="compare-container">
+              <div class="compare-input-area">
+                <textarea id="compare-input" class="agent-input" placeholder="Mission command to compare (e.g., 'Plan a mission to maximize priority points')" rows="2"></textarea>
+              </div>
+              <div id="compare-status" class="agent-status" style="display:none;"></div>
+              <div id="compare-results" class="compare-results" style="display:none;">
+                <table class="compare-table">
+                  <!-- Header is rendered by CompareUI so optional entrants
+                       (GNN, solver control) add columns automatically. -->
+                  <thead>
+                    <tr id="compare-thead-row">
+                      <th>Metric</th>
+                      <th>Single Agent</th>
+                      <th>LangGraph V4</th>
+                      <th>CrewAI</th>
+                      <th>Winner</th>
+                    </tr>
+                  </thead>
+                  <tbody id="compare-tbody"></tbody>
+                </table>
+                <div id="compare-responses" class="compare-responses"></div>
+              </div>
+              <div id="compare-history" class="compare-history"></div>
+            </div>
+          </section>
+
+          <!-- GNN TAB -->
+          <section class="tab-pane" id="tab-gnn">
+            <div class="card-header">
+              <span>GNN Mission Planner</span>
+              <button id="btn-gnn-refresh-models" class="small-btn">Refresh models</button>
+            </div>
+            <div class="gnn-container">
+
+              <ol class="gnn-steps">
+                <li><b>Load an environment</b> in the Env tab (or generate one), then return here.</li>
+                <li><b>Pick the models</b> to test. Leave a dropdown on “None” to use the
+                    built-in heuristic instead of a neural network.</li>
+                <li><b>Press a button</b> below. “Compare all” is the one to use for evaluation.</li>
+              </ol>
+
+              <div class="gnn-controls">
+                <label class="gnn-opt">
+                  Assignment model <span class="gnn-hint">chooses which drone gets which target</span>
+                  <select id="gnn-model-path"><option value="">None (heuristic)</option></select>
+                </label>
+                <label class="gnn-opt">
+                  Route model <span class="gnn-hint">chooses visit order, replacing Held-Karp</span>
+                  <select id="gnn-route-model-path"><option value="">None (greedy)</option></select>
+                </label>
+              </div>
+
+              <div class="gnn-actions">
+                <button id="btn-gnn-benchmark" class="primary-btn gnn-primary">Compare all planners</button>
+                <button id="btn-gnn-predict" class="primary-btn">Run GNN only</button>
+                <button id="btn-gnn-build" class="primary-btn">Inspect graph</button>
+                <label class="gnn-inline-opt">
+                  <input type="checkbox" id="gnn-use-solver" checked />
+                  “Run GNN only” routes with exact solver
+                </label>
+              </div>
+
+              <div id="gnn-status" class="agent-status" style="display:none;"></div>
+              <div id="gnn-empty" class="gnn-empty">
+                No results yet. Load an environment in the Env tab, then press
+                <b>Compare all planners</b>.
+              </div>
+              <div id="gnn-summary" class="gnn-summary" style="display:none;"></div>
+              <div id="gnn-compare" class="gnn-compare" style="display:none;"></div>
+              <pre id="gnn-detail" class="gnn-detail" style="display:none;"></pre>
+            </div>
+          </section>
+
+          <!-- AGENTS TRACE TAB -->
+          <section class="tab-pane" id="tab-agents-trace">
+            <div class="card-header">
+              <span>Agent Trace Log</span>
+              <button id="btn-clear-trace" class="small-btn danger-btn">Clear</button>
+            </div>
+            <div id="agents-trace-content" class="trace-container">
+              <div class="trace-empty">No agent runs yet. Send a message in the Agents tab.</div>
+            </div>
+          </section>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cesium.com/downloads/cesiumjs/releases/1.118/Build/Cesium/Cesium.js"></script>
+<script src="/static/latlng_utils.js?v=20261012-shared-flight-curve"></script>
+<script src="/static/voice.js?v=20260709-tts-eleven"></script>
+<script src="/static/preferences.js?v=20261019-storage"></script>
+<script src="/static/http_client.js?v=20261019-http"></script>
+<script src="/static/tab_controls.js?v=20261019-tabs"></script>
+<script src="/static/modal_control.js?v=20261019-modal"></script>
+<script src="/static/dom_helpers.js?v=20261024-html-text"></script>
+<script src="/static/debug_output.js?v=20261024-debug"></script>
+<script src="/static/llm_settings.js?v=20261024-settings"></script>
+<script src="/static/voice_controls.js?v=20261024-voice-controls"></script>
+<script src="/static/trace_view.js?v=20261024-trace-view"></script>
+<script src="/static/chat_view.js?v=20261024-chat-view"></script>
+<script src="/static/fleet_drawers.js?v=20261024-fleet-drawers"></script>
+<script src="/static/memory_view.js?v=20261024-memory-view"></script>
+<script src="/static/view_preferences.js?v=20261024-view-preferences"></script>
+<script src="/static/frontend_ui.js?v=20261026-composition"></script>
+<script src="/static/isr.js?v=20261026-composition"></script>
+<script src="/static/cesium_view.js?v=20261021-lifecycle"></script>
+<script id="page-capabilities" type="application/json">{"weatherPreview":true,"weatherDiagnostics":false}</script>
+<script src="/static/page_capabilities.js?v=20261021-init"></script>
+<script src="/static/weather_checkpoints.js?v=20261012-weather-detours"></script>
+<script src="/static/weather_preview.js?v=20261021-lifecycle"></script>
+<script src="/static/page_start.js?v=20261021-init"></script>
+</body>
+</html>

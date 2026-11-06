@@ -1,0 +1,16 @@
+[project]
+name = "isr-planner"
+version = "1.0.0"
+description = "Multi-drone ISR Mission Planner — FastAPI backend + LangGraph v4 agent system"
+requires-python = ">=3.11"
+readme = "README.md"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+norecursedirs = ["tests/archive", "tests/e2e"]
+markers = ["live_agent: opt-in agent smoke tests that call live providers (ISR_RUN_LIVE_AGENT_TESTS=1)"]
+
+[tool.mypy]
+exclude = ["archive"]
+ignore_missing_imports = true
