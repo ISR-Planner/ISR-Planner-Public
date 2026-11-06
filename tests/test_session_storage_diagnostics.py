@@ -1,6 +1,7 @@
 """Storage failure contracts with a scripted client and synthetic error details."""
 
 from types import SimpleNamespace
+from typing import Any
 
 import pytest
 
@@ -39,7 +40,7 @@ class ScriptedClient:
 
 
 # Every storage operation's existing failure result, plus the fixed summary error.
-CASES = [
+CASES: list[tuple[str, tuple[Any, ...], Any, str]] = [
     ("create_session", ({"source": "neutral"},), None, "creating session"),
     ("get_session", ("neutral-session",), None, "getting session"),
     (

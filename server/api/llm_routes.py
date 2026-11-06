@@ -11,9 +11,7 @@ from server.agents.llm_factory import (
     list_ollama_models,
 )
 from server.agents.llm_factory import test_connection as test_llm_connection
-from server.agents.llm_factory import (
-    validate_provider_model,
-)
+from server.agents.llm_factory import validate_provider_model
 
 from .models import LLMTestRequest, LLMTestResponse, TTSRequest
 

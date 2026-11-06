@@ -1170,7 +1170,7 @@ def _base_visibility_graph(
             return cached
         pending = _BASE_GRAPH_INFLIGHT.get(key)
         owner = pending is None
-        if owner:
+        if pending is None:
             pending = Future()
             _BASE_GRAPH_INFLIGHT[key] = pending
     if not owner:
@@ -1270,11 +1270,12 @@ def _build_visibility_graph(
     if debug:
         print(f"  Visibility graph: {len(graph)} nodes ({len(polygons)} polygons)")
 
-    context = _endpoint_visibility_context(base, polygons) if ends else None
-    for p in ends:
-        for v, dist in _endpoint_connections(p, context):
-            graph[p].append((v, dist))
-            graph[v].append((p, dist))
+    if ends:
+        context = _endpoint_visibility_context(base, polygons)
+        for p in ends:
+            for v, dist in _endpoint_connections(p, context):
+                graph[p].append((v, dist))
+                graph[v].append((p, dist))
     if len(ends) == 2 and _segment_clear_of_all_polygons(ends[0], ends[1], polygons):
         dist = _distance(ends[0], ends[1])
         graph[ends[0]].append((ends[1], dist))
